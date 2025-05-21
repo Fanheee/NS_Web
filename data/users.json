@@ -1,0 +1,18 @@
+{
+  "users": [
+    {
+      "id": "1747743234584",
+      "username": "user1",
+      "email": "2919219501@qq.com",
+      "password": "dXNlcjE=",
+      "createdAt": "2025-05-20T12:13:54.584Z"
+    },
+    {
+      "id": "1747744559993",
+      "username": "user2",
+      "email": "2919219501@qq.com",
+      "password": "dXNlcjI=",
+      "createdAt": "2025-05-20T12:35:59.993Z"
+    }
+  ]
+}

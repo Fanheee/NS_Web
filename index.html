@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetShaper - 差分隐私流量整形保护者</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+</head>
+<body>
+    <div class="particles-container" id="particles-js"></div>
+    
+    <div class="main-container">
+        <div class="logo-container">
+            <h1 class="logo-text">隐信流塑 </h1>
+            <p class="slogan">您的流量隐私保护者</p>
+            <p class="english-slogan">The newest system to detect your plugins</p>
+        </div>
+
+        <div class="form-container" id="login-form">
+            <div class="form-header">
+                <h2>隐信塑流</h2>
+            </div>
+            <form id="login">
+                <div class="input-group">
+                    <input type="text" id="username" name="username" required>
+                    <span class="input-highlight"></span>
+                    <label for="username">用户名</label>
+                    <i class="input-icon fas fa-user"></i>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" name="password" required>
+                    <span class="input-highlight"></span>
+                    <label for="password">密码</label>
+                    <i class="input-icon fas fa-lock"></i>
+                </div>
+                <button type="submit" class="glow-button">登录</button>
+                <div class="form-options">
+                    <a href="#" id="switch-to-register">注册账号</a>
+                    <a href="#">忘记密码?</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="form-container" id="register-form" style="display: none;">
+            <div class="form-header">
+                <h2>注册账号</h2>
+            </div>
+            <form id="register">
+                <div class="input-group">
+                    <input type="text" id="reg-username" name="username" required>
+                    <span class="input-highlight"></span>
+                    <label for="reg-username">用户名</label>
+                    <i class="input-icon fas fa-user"></i>
+                </div>
+                <div class="input-group">
+                    <input type="email" id="reg-email" name="email" required>
+                    <span class="input-highlight"></span>
+                    <label for="reg-email">电子邮箱</label>
+                    <i class="input-icon fas fa-envelope"></i>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="reg-password" name="password" required>
+                    <span class="input-highlight"></span>
+                    <label for="reg-password">密码</label>
+                    <i class="input-icon fas fa-lock"></i>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="reg-confirm-password" name="confirm-password" required>
+                    <span class="input-highlight"></span>
+                    <label for="reg-confirm-password">确认密码</label>
+                    <i class="input-icon fas fa-check-circle"></i>
+                </div>
+                <button type="submit" class="glow-button">注册</button>
+                <div class="form-options">
+                    <a href="#" id="switch-to-login">已有账号? 登录</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="additional-actions">
+            <div class="action-buttons">
+                <a href="#" class="action-button">登录进入</a>
+                <a href="#" class="action-button outline">直接进入</a>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="contact-us">
+                <h3>联系我们</h3>
+                <div class="social-icons">
+                    <a href="#" class="social-icon"><i class="fas fa-bell"></i></a>
+                    <a href="#" class="social-icon"><i class="fas fa-envelope"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-weixin"></i></a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 加载脚本 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html> 

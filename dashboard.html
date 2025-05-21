@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetShaper - 控制面板</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+</head>
+<body class="dashboard-body">
+    <div class="particles-container" id="particles-js"></div>
+    
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <div class="logo">
+                <h1>NetShaper</h1>
+                <p>差分隐私流量整形保护者</p>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="user-details">
+                    <p class="username" id="current-user">加载中...</p>
+                    <button id="logout-btn" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> 退出登录
+                    </button>
+                </div>
+            </div>
+        </header>
+        
+        <div class="dashboard-main">
+            <div class="sidebar">
+                <nav class="sidebar-nav">
+                    <ul>
+                        <li class="active" data-tab="overview">
+                            <i class="fas fa-home"></i>
+                            <span>概览</span>
+                        </li>
+                        <li data-tab="users-list">
+                            <i class="fas fa-users"></i>
+                            <span>用户列表</span>
+                        </li>
+                        <li data-tab="privacy-shield">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>隐私护盾</span>
+                        </li>
+                        <li data-tab="traffic-shaping">
+                            <i class="fas fa-project-diagram"></i>
+                            <span>流量整形</span>
+                        </li>
+                        <li data-tab="settings">
+                            <i class="fas fa-cog"></i>
+                            <span>设置</span>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            
+            <div class="main-content">
+                <div class="tab-content active" id="overview">
+                    <h2><i class="fas fa-home"></i> 系统概览</h2>
+                    <div class="dashboard-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>护盾状态</h3>
+                                <p class="stat-value">已启动</p>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 85%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>用户数量</h3>
+                                <p class="stat-value" id="total-users">加载中...</p>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 60%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-exchange-alt"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>流量状态</h3>
+                                <p class="stat-value">稳定</p>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 92%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>系统性能</h3>
+                                <p class="stat-value">优良</p>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 78%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="welcome-message">
+                        <h3>欢迎回来！</h3>
+                        <p>当前差分隐私流量整形保护系统运行正常，无需进行操作。</p>
+                        <p>最近一次更新: <span id="last-update">2023-07-15 08:30:45</span></p>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="users-list">
+                    <h2><i class="fas fa-users"></i> 用户列表</h2>
+                    <div class="users-controls">
+                        <div class="search-box">
+                            <input type="text" id="user-search" placeholder="搜索用户名或邮箱...">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <button class="refresh-btn" id="refresh-users">
+                            <i class="fas fa-sync-alt"></i> 刷新
+                        </button>
+                    </div>
+                    
+                    <div class="users-table-container">
+                        <table class="users-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>用户名</th>
+                                    <th>邮箱</th>
+                                    <th>注册时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body">
+                                <!-- 用户数据将通过JavaScript动态加载 -->
+                                <tr class="loading-row">
+                                    <td colspan="5" class="loading-message">加载用户数据中...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="privacy-shield">
+                    <h2><i class="fas fa-shield-alt"></i> 隐私护盾</h2>
+                    <div class="shield-container">
+                        <div class="shield-status">
+                            <div class="shield-icon active">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="shield-info">
+                                <h3>护盾状态: <span class="status-active">激活</span></h3>
+                                <p>当前差分隐私参数设置: ε = 0.5, δ = 10<sup>-5</sup></p>
+                            </div>
+                        </div>
+                        
+                        <div class="shield-settings">
+                            <h3>参数设置</h3>
+                            <div class="setting-group">
+                                <label for="epsilon">ε 参数 (隐私预算):</label>
+                                <input type="range" id="epsilon" min="0.1" max="2" step="0.1" value="0.5">
+                                <span class="range-value">0.5</span>
+                            </div>
+                            <div class="setting-group">
+                                <label for="delta">δ 参数 (失败概率):</label>
+                                <input type="range" id="delta" min="1" max="6" step="1" value="5">
+                                <span class="range-value">10<sup>-5</sup></span>
+                            </div>
+                            <button class="apply-btn">应用设置</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="traffic-shaping">
+                    <h2><i class="fas fa-project-diagram"></i> 流量整形</h2>
+                    <div class="traffic-container">
+                        <div class="traffic-status">
+                            <h3>流量整形状态: <span class="status-active">运行中</span></h3>
+                            <p>当前流量保护级别: <span class="level-high">高</span></p>
+                        </div>
+                        
+                        <div class="traffic-chart">
+                            <h3>流量监控</h3>
+                            <div class="chart-placeholder">
+                                <div class="chart-line"></div>
+                                <div class="chart-line"></div>
+                                <div class="chart-line"></div>
+                                <div class="chart-line"></div>
+                                <div class="chart-line"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="traffic-control">
+                            <h3>控制面板</h3>
+                            <div class="control-buttons">
+                                <button class="control-btn active"><i class="fas fa-play"></i> 启动</button>
+                                <button class="control-btn"><i class="fas fa-pause"></i> 暂停</button>
+                                <button class="control-btn"><i class="fas fa-stop"></i> 停止</button>
+                                <button class="control-btn"><i class="fas fa-redo"></i> 重启</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="settings">
+                    <h2><i class="fas fa-cog"></i> 设置</h2>
+                    <div class="settings-container">
+                        <div class="setting-section">
+                            <h3>个人资料</h3>
+                            <div class="profile-settings">
+                                <div class="form-group">
+                                    <label for="profile-username">用户名</label>
+                                    <input type="text" id="profile-username" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label for="profile-email">电子邮箱</label>
+                                    <input type="email" id="profile-email">
+                                </div>
+                                <button class="save-btn">保存更改</button>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-section">
+                            <h3>安全设置</h3>
+                            <div class="security-settings">
+                                <div class="form-group">
+                                    <label for="current-password">当前密码</label>
+                                    <input type="password" id="current-password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="new-password">新密码</label>
+                                    <input type="password" id="new-password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirm-password">确认新密码</label>
+                                    <input type="password" id="confirm-password">
+                                </div>
+                                <button class="save-btn">更改密码</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 脚本加载 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html> 
