@@ -55,6 +55,18 @@
                             <i class="fas fa-cog"></i>
                             <span>设置</span>
                         </li>
+                        <li data-tab="experiment">
+                            <i class="fas fa-flask"></i>
+                            <span>实验运行</span>
+                        </li>
+                        <li data-tab="run-logs">
+                            <i class="fas fa-file-alt"></i>
+                            <span>运行日志</span>
+                        </li>
+                        <li data-tab="video-player">
+                            <i class="fas fa-play-circle"></i>
+                            <span>视频播放</span>
+                        </li>
                     </ul>
                 </nav>
             </div>
@@ -251,6 +263,176 @@
                                     <input type="password" id="confirm-password">
                                 </div>
                                 <button class="save-btn">更改密码</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="experiment">
+                    <h2><i class="fas fa-flask"></i> 实验运行</h2>
+                    <div class="experiment-container">
+                        <div class="experiment-header">
+                            <h3>选择实验类型</h3>
+                            <p>请选择以下实验类型进行配置和运行</p>
+                        </div>
+                        
+                        <div class="experiment-cards">
+                            <div class="experiment-card" data-exp="classifier">
+                                <div class="exp-icon">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <div class="exp-content">
+                                    <h4>Classifier</h4>
+                                    <p>分类器实验配置</p>
+                                </div>
+                                <div class="exp-arrow">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="experiment-card" data-exp="privacy">
+                                <div class="exp-icon">
+                                    <i class="fas fa-user-shield"></i>
+                                </div>
+                                <div class="exp-content">
+                                    <h4>Privacy</h4>
+                                    <p>隐私保护实验配置</p>
+                                </div>
+                                <div class="exp-arrow">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="experiment-card" data-exp="related">
+                                <div class="exp-icon">
+                                    <i class="fas fa-link"></i>
+                                </div>
+                                <div class="exp-content">
+                                    <h4>Related</h4>
+                                    <p>相关性实验配置</p>
+                                </div>
+                                <div class="exp-arrow">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="experiment-card" data-exp="video_bandwidth">
+                                <div class="exp-icon">
+                                    <i class="fas fa-video"></i>
+                                </div>
+                                <div class="exp-content">
+                                    <h4>Video Bandwidth</h4>
+                                    <p>视频带宽实验配置</p>
+                                </div>
+                                <div class="exp-arrow">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="experiment-card" data-exp="web_bandwidth">
+                                <div class="exp-icon">
+                                    <i class="fas fa-globe"></i>
+                                </div>
+                                <div class="exp-content">
+                                    <h4>Web Bandwidth</h4>
+                                    <p>网页带宽实验配置</p>
+                                </div>
+                                <div class="exp-arrow">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="experiment-status">
+                            <div class="status-icon">
+                                <i class="fas fa-circle-notch fa-spin"></i>
+                            </div>
+                            <div class="status-info">
+                                <h3>实验状态</h3>
+                                <p>无实验运行中</p>
+                            </div>
+                            <button class="start-btn disabled">
+                                <i class="fas fa-play"></i> 启动实验
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="run-logs">
+                    <h2><i class="fas fa-file-alt"></i> 运行日志</h2>
+                    <div class="logs-container">
+                        <div class="logs-filter">
+                            <div class="filter-group">
+                                <label for="log-date">日期筛选:</label>
+                                <input type="date" id="log-date">
+                            </div>
+                            <div class="filter-group">
+                                <label for="log-type">实验类型:</label>
+                                <select id="log-type">
+                                    <option value="all">全部</option>
+                                    <option value="classifier">Classifier</option>
+                                    <option value="privacy">Privacy</option>
+                                    <option value="related">Related</option>
+                                    <option value="video_bandwidth">Video Bandwidth</option>
+                                    <option value="web_bandwidth">Web Bandwidth</option>
+                                </select>
+                            </div>
+                            <button class="filter-btn">
+                                <i class="fas fa-filter"></i> 筛选
+                            </button>
+                            <button class="clear-logs-btn">
+                                <i class="fas fa-trash-alt"></i> 清空日志
+                            </button>
+                        </div>
+                        
+                        <div class="logs-table-container">
+                            <table class="logs-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>实验名称</th>
+                                        <th>实验类型</th>
+                                        <th>开始时间</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="logs-table-body">
+                                    <!-- 实验日志数据将通过API动态加载 -->
+                                    <tr class="loading-row">
+                                        <td colspan="6" class="loading-message">加载日志数据中...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="logs-pagination">
+                            <button class="page-btn active">1</button>
+                            <button class="page-btn">2</button>
+                            <button class="page-btn">3</button>
+                            <span class="page-ellipsis">...</span>
+                            <button class="page-btn">10</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="video-player">
+                    <h2><i class="fas fa-play-circle"></i> 视频播放</h2>
+                    <div class="video-container">
+                        <div class="video-input-section">
+                            <div class="video-input-group">
+                                <label for="video-name">视频名称:</label>
+                                <input type="text" id="video-name" placeholder="请输入视频名称...">
+                            </div>
+                            <button class="play-btn">
+                                <i class="fas fa-play"></i> 播放
+                            </button>
+                        </div>
+                        
+                        <div class="video-player-container">
+                            <div class="video-placeholder">
+                                <i class="fas fa-film"></i>
+                                <p>请输入视频名称并点击播放</p>
                             </div>
                         </div>
                     </div>

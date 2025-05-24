@@ -11,6 +11,8 @@ app.use(express.static('.'));
 
 // 用户数据文件路径
 const usersFilePath = path.join(__dirname, 'data', 'users.json');
+// 实验日志文件路径
+const experimentFilePath = path.join(__dirname, 'data', 'experiment.json');
 
 // 确保用户数据文件存在
 function ensureUserFileExists() {
@@ -20,6 +22,17 @@ function ensureUserFileExists() {
     
     if (!fs.existsSync(usersFilePath)) {
         fs.writeFileSync(usersFilePath, JSON.stringify({ users: [] }, null, 2));
+    }
+}
+
+// 确保实验日志文件存在
+function ensureExperimentFileExists() {
+    if (!fs.existsSync(path.join(__dirname, 'data'))) {
+        fs.mkdirSync(path.join(__dirname, 'data'));
+    }
+    
+    if (!fs.existsSync(experimentFilePath)) {
+        fs.writeFileSync(experimentFilePath, JSON.stringify({ logs: [] }, null, 2));
     }
 }
 
@@ -33,6 +46,18 @@ function readUsers() {
 // 写入用户数据
 function writeUsers(data) {
     fs.writeFileSync(usersFilePath, JSON.stringify(data, null, 2));
+}
+
+// 读取实验日志数据
+function readExperimentLogs() {
+    ensureExperimentFileExists();
+    const data = fs.readFileSync(experimentFilePath, 'utf8');
+    return JSON.parse(data);
+}
+
+// 写入实验日志数据
+function writeExperimentLogs(data) {
+    fs.writeFileSync(experimentFilePath, JSON.stringify(data, null, 2));
 }
 
 // 注册API
@@ -125,8 +150,97 @@ app.get('/api/users', (req, res) => {
     }
 });
 
+// 获取实验日志API
+app.get('/api/experiments', (req, res) => {
+    try {
+        const logData = readExperimentLogs();
+        res.json({ success: true, logs: logData.logs });
+    } catch (error) {
+        console.error('获取实验日志错误:', error);
+        res.status(500).json({ success: false, message: '服务器错误' });
+    }
+});
+
+// 添加实验日志API
+app.post('/api/experiments', (req, res) => {
+    try {
+        const newLog = req.body;
+        
+        // 验证输入
+        if (!newLog.name || !newLog.type || !newLog.startTime) {
+            return res.status(400).json({ success: false, message: '缺少必要的日志信息' });
+        }
+        
+        // 读取现有日志
+        const logData = readExperimentLogs();
+        
+        // 生成新ID
+        const newId = logData.logs.length > 0 ? Math.max(...logData.logs.map(log => log.id)) + 1 : 1;
+        newLog.id = newId;
+        
+        // 确保不包含结束时间字段
+        if (newLog.endTime) {
+            delete newLog.endTime;
+        }
+        
+        // 添加新日志
+        logData.logs.unshift(newLog);
+        
+        // 保存日志数据
+        writeExperimentLogs(logData);
+        
+        res.status(201).json({ success: true, message: '实验日志添加成功', log: newLog });
+    } catch (error) {
+        console.error('添加实验日志错误:', error);
+        res.status(500).json({ success: false, message: '服务器错误' });
+    }
+});
+
+// 更新实验日志状态API
+app.put('/api/experiments/:id', (req, res) => {
+    try {
+        const logId = parseInt(req.params.id);
+        const { status } = req.body;
+        
+        // 读取现有日志
+        const logData = readExperimentLogs();
+        
+        // 查找日志
+        const logIndex = logData.logs.findIndex(log => log.id === logId);
+        
+        if (logIndex === -1) {
+            return res.status(404).json({ success: false, message: '未找到该实验日志' });
+        }
+        
+        // 更新日志状态
+        if (status) logData.logs[logIndex].status = status;
+        
+        // 保存日志数据
+        writeExperimentLogs(logData);
+        
+        res.json({ success: true, message: '实验日志状态更新成功', log: logData.logs[logIndex] });
+    } catch (error) {
+        console.error('更新实验日志状态错误:', error);
+        res.status(500).json({ success: false, message: '服务器错误' });
+    }
+});
+
+// 清空实验日志API
+app.delete('/api/experiments', (req, res) => {
+    try {
+        // 清空日志数据
+        writeExperimentLogs({ logs: [] });
+        
+        res.json({ success: true, message: '实验日志已清空' });
+    } catch (error) {
+        console.error('清空实验日志错误:', error);
+        res.status(500).json({ success: false, message: '服务器错误' });
+    }
+});
+
 // 启动服务器
 app.listen(port, () => {
     ensureUserFileExists();
+    ensureExperimentFileExists();
     console.log(`服务器运行在 http://localhost:${port}`);
 }); 

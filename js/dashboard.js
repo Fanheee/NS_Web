@@ -9,9 +9,21 @@ const userSearchInput = document.getElementById('user-search');
 const logoutBtn = document.getElementById('logout-btn');
 const profileUsernameInput = document.getElementById('profile-username');
 const profileEmailInput = document.getElementById('profile-email');
+const experimentCards = document.querySelectorAll('.experiment-card');
+const startExperimentBtn = document.querySelector('.start-btn');
+const videoNameInput = document.getElementById('video-name');
+const playBtn = document.querySelector('.play-btn');
+const videoPlaceholder = document.querySelector('.video-placeholder');
+const logDateInput = document.getElementById('log-date');
+const logTypeSelect = document.getElementById('log-type');
+const filterBtn = document.querySelector('.filter-btn');
+const clearLogsBtn = document.querySelector('.clear-logs-btn');
+const pageBtns = document.querySelectorAll('.page-btn');
 
 // 当前登录用户信息
 let currentUser = null;
+let selectedExperiment = null;
+let currentExperimentId = null;
 
 // 初始化页面
 document.addEventListener('DOMContentLoaded', function() {
@@ -39,6 +51,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     // 如果是用户列表，自动加载用户
                     if (tabId === 'users-list') {
                         loadUsers();
+                    }
+                    
+                    // 如果是运行日志，加载日志
+                    if (tabId === 'run-logs') {
+                        loadLogs();
                     }
                 }
             });
@@ -76,6 +93,71 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 图表动画
     animateCharts();
+    
+    // 实验卡片点击事件
+    if (experimentCards) {
+        experimentCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const expType = this.getAttribute('data-exp');
+                selectExperiment(expType, this);
+            });
+        });
+    }
+    
+    // 启动实验按钮
+    if (startExperimentBtn) {
+        startExperimentBtn.addEventListener('click', function() {
+            if (!this.classList.contains('disabled')) {
+                startExperiment();
+            }
+        });
+    }
+    
+    // 视频播放按钮
+    if (playBtn) {
+        playBtn.addEventListener('click', function() {
+            playVideo();
+        });
+    }
+    
+    // 视频输入框回车事件
+    if (videoNameInput) {
+        videoNameInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                playVideo();
+            }
+        });
+    }
+    
+    // 日志筛选按钮
+    if (filterBtn) {
+        filterBtn.addEventListener('click', function() {
+            filterLogs();
+        });
+    }
+    
+    // 清空日志按钮
+    if (clearLogsBtn) {
+        clearLogsBtn.addEventListener('click', function() {
+            clearLogs();
+        });
+    }
+    
+    // 分页按钮
+    if (pageBtns) {
+        pageBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (!this.classList.contains('active')) {
+                    pageBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    loadLogs(parseInt(this.textContent));
+                }
+            });
+        });
+    }
+    
+    // 视频播放器控制
+    initVideoPlayerControls();
 });
 
 // 检查登录状态
@@ -118,7 +200,7 @@ function loadUsers() {
     `;
     
     // 发送API请求
-    fetch('/api/users')
+    fetch('http://localhost:3000/api/users')
         .then(response => {
             if (!response.ok) {
                 throw new Error('获取用户列表失败');
@@ -346,4 +428,572 @@ function animateCharts() {
             line.style.transition = 'height 1s ease-in-out';
         });
     }, 5000);
+}
+
+// 选择实验类型
+function selectExperiment(expType, card) {
+    selectedExperiment = expType;
+    
+    // 更新UI
+    experimentCards.forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    
+    // 启用开始按钮
+    startExperimentBtn.classList.remove('disabled');
+    startExperimentBtn.innerHTML = `<i class="fas fa-play"></i> 启动 ${getExperimentName(expType)} 实验`;
+    
+    // 更新状态信息
+    const statusInfo = document.querySelector('.status-info p');
+    if (statusInfo) {
+        statusInfo.textContent = `准备启动 ${getExperimentName(expType)} 实验`;
+    }
+    
+    // 添加选中样式
+    card.style.borderColor = 'var(--primary-color)';
+    card.style.boxShadow = '0 0 20px rgba(0, 247, 255, 0.4)';
+}
+
+// 获取实验名称
+function getExperimentName(expType) {
+    const nameMap = {
+        'classifier': 'Classifier',
+        'privacy': 'Privacy',
+        'related': 'Related',
+        'video_bandwidth': 'Video Bandwidth',
+        'web_bandwidth': 'Web Bandwidth'
+    };
+    
+    return nameMap[expType] || expType;
+}
+
+// 启动实验
+function startExperiment() {
+    if (!selectedExperiment) return;
+    
+    // 更新UI显示正在启动
+    startExperimentBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> 启动中...`;
+    startExperimentBtn.disabled = true;
+    
+    // 模拟API请求启动实验
+    setTimeout(() => {
+        // 显示实验已启动
+        const statusIcon = document.querySelector('.status-icon i');
+        const statusInfo = document.querySelector('.status-info p');
+        
+        if (statusIcon) {
+            statusIcon.className = 'fas fa-cog fa-spin';
+        }
+        
+        if (statusInfo) {
+            statusInfo.textContent = `${getExperimentName(selectedExperiment)} 实验运行中`;
+            statusInfo.style.color = 'var(--primary-color)';
+        }
+        
+        startExperimentBtn.innerHTML = `<i class="fas fa-stop"></i> 终止运行`;
+        startExperimentBtn.disabled = false;
+        
+        // 添加实验记录到日志
+        addExperimentLog(selectedExperiment);
+        
+        // 显示成功消息
+        showNotification(`${getExperimentName(selectedExperiment)} 实验已成功启动`, 'success');
+        
+        // 添加点击事件以停止实验
+        startExperimentBtn.removeEventListener('click', startExperiment);
+        startExperimentBtn.addEventListener('click', stopExperiment);
+    }, 2000);
+}
+
+// 停止实验
+function stopExperiment() {
+    // 更新UI显示正在停止
+    startExperimentBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> 终止中...`;
+    startExperimentBtn.disabled = true;
+    
+    // 模拟API请求停止实验
+    setTimeout(() => {
+        // 如果有当前实验ID，直接更新状态
+        if (currentExperimentId) {
+            fetch(`http://localhost:3000/api/experiments/${currentExperimentId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    status: 'completed'
+                })
+            })
+            .then(response => response.json())
+            .then(updateData => {
+                if (updateData.success) {
+                    console.log('实验日志已更新:', updateData.log);
+                } else {
+                    console.error('更新实验日志失败:', updateData.message);
+                }
+            })
+            .catch(error => {
+                console.error('API请求错误:', error);
+            });
+            
+            // 清除当前实验ID
+            currentExperimentId = null;
+        }
+        
+        // 更新UI状态
+        const statusIcon = document.querySelector('.status-icon i');
+        const statusInfo = document.querySelector('.status-info p');
+        
+        if (statusIcon) {
+            statusIcon.className = 'fas fa-circle-notch fa-spin';
+        }
+        
+        if (statusInfo) {
+            statusInfo.textContent = `无实验运行中`;
+            statusInfo.style.color = '';
+        }
+        
+        startExperimentBtn.innerHTML = `<i class="fas fa-play"></i> 启动实验`;
+        startExperimentBtn.disabled = false;
+        startExperimentBtn.classList.add('disabled');
+        
+        // 清除选中的实验
+        selectedExperiment = null;
+        experimentCards.forEach(c => {
+            c.classList.remove('selected');
+            c.style.borderColor = '';
+            c.style.boxShadow = '';
+        });
+        
+        // 显示成功消息
+        showNotification(`实验已成功终止`, 'success');
+        
+        // 恢复点击事件
+        startExperimentBtn.removeEventListener('click', stopExperiment);
+        startExperimentBtn.addEventListener('click', startExperiment);
+    }, 2000);
+}
+
+// 添加实验记录到日志
+function addExperimentLog(expType) {
+    const now = new Date();
+    const formattedDate = now.toLocaleString('zh-CN');
+    const expName = `${getExperimentName(expType)}测试-${now.getTime()}`;
+    
+    // 构建日志对象
+    const log = {
+        name: expName,
+        type: getExperimentName(expType),
+        startTime: formattedDate,
+        status: 'running'
+    };
+    
+    // 发送API请求保存日志
+    fetch('http://localhost:3000/api/experiments', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(log)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('实验日志已添加:', data.log);
+            // 保存当前运行实验的ID，用于后续更新状态
+            currentExperimentId = data.log.id;
+        } else {
+            console.error('添加实验日志失败:', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('API请求错误:', error);
+    });
+}
+
+// 加载实验日志
+function loadLogs(page = 1) {
+    const logsTableBody = document.getElementById('logs-table-body');
+    if (!logsTableBody) return;
+    
+    // 显示加载状态
+    logsTableBody.innerHTML = `
+        <tr class="loading-row">
+            <td colspan="6" class="loading-message">加载日志数据中...</td>
+        </tr>
+    `;
+    
+    // 发送API请求获取日志
+    fetch('http://localhost:3000/api/experiments')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`服务器响应错误: ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // 筛选日志
+                let logs = filterLogsData(data.logs);
+                
+                // 分页
+                const pageSize = 10;
+                const startIndex = (page - 1) * pageSize;
+                const endIndex = startIndex + pageSize;
+                const pagedLogs = logs.slice(startIndex, endIndex);
+                
+                // 渲染日志表格
+                renderLogs(pagedLogs, logsTableBody);
+                
+                // 更新分页按钮
+                updatePagination(logs.length, pageSize, page);
+            } else {
+                throw new Error(data.message || '获取日志数据失败');
+            }
+        })
+        .catch(error => {
+            console.error('Error details:', error);
+            logsTableBody.innerHTML = `
+                <tr class="loading-row">
+                    <td colspan="6" class="loading-message">加载失败: ${error.message}</td>
+                </tr>
+            `;
+        });
+}
+
+// 筛选日志数据
+function filterLogsData(logs) {
+    let filteredLogs = [...logs];
+    
+    // 日期筛选
+    if (logDateInput && logDateInput.value) {
+        const filterDate = new Date(logDateInput.value).toLocaleDateString('zh-CN');
+        filteredLogs = filteredLogs.filter(log => {
+            const logDate = new Date(log.startTime).toLocaleDateString('zh-CN');
+            return logDate === filterDate;
+        });
+    }
+    
+    // 类型筛选
+    if (logTypeSelect && logTypeSelect.value !== 'all') {
+        filteredLogs = filteredLogs.filter(log => log.type === logTypeSelect.value);
+    }
+    
+    return filteredLogs;
+}
+
+// 筛选日志
+function filterLogs() {
+    loadLogs(1); // 重新加载第一页
+    
+    // 重置分页按钮
+    if (pageBtns) {
+        pageBtns.forEach((btn, index) => {
+            if (index === 0) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+}
+
+// 渲染日志表格
+function renderLogs(logs, logsTableBody) {
+    if (logs.length === 0) {
+        logsTableBody.innerHTML = `
+            <tr class="loading-row">
+                <td colspan="6" class="loading-message">暂无日志数据</td>
+            </tr>
+        `;
+        return;
+    }
+    
+    let html = '';
+    logs.forEach(log => {
+        html += `
+            <tr>
+                <td>${log.id}</td>
+                <td>${log.name}</td>
+                <td>${log.type}</td>
+                <td>${log.startTime}</td>
+                <td><span class="status ${log.status}">${getStatusText(log.status)}</span></td>
+                <td>
+                    <button class="view-btn"><i class="fas fa-eye"></i></button>
+                    <button class="download-btn"><i class="fas fa-download"></i></button>
+                </td>
+            </tr>
+        `;
+    });
+    
+    logsTableBody.innerHTML = html;
+}
+
+// 获取状态文本
+function getStatusText(status) {
+    const statusMap = {
+        'completed': '已完成',
+        'running': '运行中',
+        'failed': '失败'
+    };
+    
+    return statusMap[status] || status;
+}
+
+// 更新分页
+function updatePagination(totalItems, pageSize, currentPage) {
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const pagination = document.querySelector('.logs-pagination');
+    
+    if (!pagination) return;
+    
+    // 仅显示当前页面前后各2页
+    let html = '';
+    
+    for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+            html += `<button class="page-btn ${i === currentPage ? 'active' : ''}">${i}</button>`;
+        } else if (i === currentPage - 3 || i === currentPage + 3) {
+            html += `<span class="page-ellipsis">...</span>`;
+        }
+    }
+    
+    pagination.innerHTML = html;
+    
+    // 重新绑定事件
+    const newPageBtns = pagination.querySelectorAll('.page-btn');
+    newPageBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (!this.classList.contains('active')) {
+                newPageBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                loadLogs(parseInt(this.textContent));
+            }
+        });
+    });
+}
+
+// 播放视频
+function playVideo() {
+    const videoName = videoNameInput.value.trim();
+    
+    if (!videoName) {
+        showNotification('请输入视频名称', 'error');
+        videoNameInput.focus();
+        return;
+    }
+    
+    // 更新UI
+    videoPlaceholder.innerHTML = `
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>正在加载视频: ${videoName}</p>
+    `;
+    
+    // 模拟视频加载
+    setTimeout(() => {
+        // 显示视频播放器
+        videoPlaceholder.innerHTML = `
+            <div class="video-playing">
+                <i class="fas fa-play-circle"></i>
+                <p>${videoName} (模拟播放中)</p>
+            </div>
+        `;
+        
+        showNotification(`正在播放: ${videoName}`, 'success');
+    }, 1500);
+}
+
+// 初始化视频播放器控制
+function initVideoPlayerControls() {
+    const videoControls = document.querySelector('.video-controls');
+    if (!videoControls) return;
+    
+    // 播放/暂停按钮
+    const playButton = videoControls.querySelector('.control-button.play');
+    if (playButton) {
+        playButton.addEventListener('click', function() {
+            this.classList.toggle('paused');
+            
+            if (this.classList.contains('paused')) {
+                this.innerHTML = '<i class="fas fa-pause"></i>';
+            } else {
+                this.innerHTML = '<i class="fas fa-play"></i>';
+            }
+        });
+    }
+    
+    // 进度条点击
+    const progressBar = videoControls.querySelector('.video-progress');
+    if (progressBar) {
+        progressBar.addEventListener('click', function(e) {
+            const rect = this.getBoundingClientRect();
+            const pos = (e.clientX - rect.left) / rect.width;
+            const progressBarFill = this.querySelector('.progress-bar-video');
+            
+            if (progressBarFill) {
+                progressBarFill.style.width = `${pos * 100}%`;
+            }
+            
+            // 更新时间显示
+            const timeDisplay = videoControls.querySelector('.video-time');
+            if (timeDisplay) {
+                const totalMinutes = Math.floor(Math.random() * 10) + 1;
+                const totalSeconds = Math.floor(Math.random() * 60);
+                const currentMinutes = Math.floor(totalMinutes * pos);
+                const currentSeconds = Math.floor(totalSeconds * pos);
+                
+                timeDisplay.textContent = `${padZero(currentMinutes)}:${padZero(currentSeconds)} / ${padZero(totalMinutes)}:${padZero(totalSeconds)}`;
+            }
+        });
+    }
+    
+    // 音量控制
+    const volumeSlider = videoControls.querySelector('.volume-slider');
+    const volumeIcon = videoControls.querySelector('.volume-control i');
+    
+    if (volumeSlider && volumeIcon) {
+        volumeSlider.addEventListener('input', function() {
+            const value = this.value;
+            
+            // 更新图标
+            if (value == 0) {
+                volumeIcon.className = 'fas fa-volume-mute';
+            } else if (value < 50) {
+                volumeIcon.className = 'fas fa-volume-down';
+            } else {
+                volumeIcon.className = 'fas fa-volume-up';
+            }
+        });
+    }
+    
+    // 全屏按钮
+    const fullscreenButton = videoControls.querySelector('.fullscreen-button');
+    if (fullscreenButton) {
+        fullscreenButton.addEventListener('click', function() {
+            const videoContainer = document.querySelector('.video-player-container');
+            if (!videoContainer) return;
+            
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+                this.innerHTML = '<i class="fas fa-expand"></i>';
+            } else {
+                videoContainer.requestFullscreen();
+                this.innerHTML = '<i class="fas fa-compress"></i>';
+            }
+        });
+    }
+}
+
+// 工具函数：数字前补零
+function padZero(num) {
+    return num.toString().padStart(2, '0');
+}
+
+// 显示通知
+function showNotification(message, type = 'info') {
+    // 创建通知元素
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <i class="fas ${getNotificationIcon(type)}"></i>
+        <p>${message}</p>
+        <button class="close-btn"><i class="fas fa-times"></i></button>
+    `;
+    
+    // 添加到页面
+    document.body.appendChild(notification);
+    
+    // 显示动画
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+    
+    // 自动关闭
+    const timeout = setTimeout(() => {
+        closeNotification(notification);
+    }, 5000);
+    
+    // 关闭按钮
+    const closeBtn = notification.querySelector('.close-btn');
+    closeBtn.addEventListener('click', () => {
+        clearTimeout(timeout);
+        closeNotification(notification);
+    });
+}
+
+// 关闭通知
+function closeNotification(notification) {
+    notification.classList.remove('show');
+    
+    // 移除元素
+    setTimeout(() => {
+        notification.remove();
+    }, 300);
+}
+
+// 获取通知图标
+function getNotificationIcon(type) {
+    const iconMap = {
+        'info': 'fa-info-circle',
+        'success': 'fa-check-circle',
+        'warning': 'fa-exclamation-triangle',
+        'error': 'fa-times-circle'
+    };
+    
+    return iconMap[type] || iconMap.info;
+}
+
+// 清空实验日志
+function clearLogs() {
+    // 显示确认对话框
+    if (!confirm('确定要清空所有实验日志吗？此操作不可恢复！')) {
+        return;
+    }
+    
+    // 显示加载状态
+    const logsTableBody = document.getElementById('logs-table-body');
+    if (logsTableBody) {
+        logsTableBody.innerHTML = `
+            <tr class="loading-row">
+                <td colspan="6" class="loading-message">正在清空日志数据...</td>
+            </tr>
+        `;
+    }
+    
+    // 发送API请求清空日志
+    fetch('http://localhost:3000/api/experiments', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`服务器响应错误: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // 重新加载日志（现在应该是空的）
+            loadLogs();
+            
+            // 显示成功消息
+            showNotification('实验日志已清空', 'success');
+        } else {
+            throw new Error(data.message || '清空日志失败');
+        }
+    })
+    .catch(error => {
+        console.error('Error details:', error);
+        if (logsTableBody) {
+            logsTableBody.innerHTML = `
+                <tr class="loading-row">
+                    <td colspan="6" class="loading-message">清空失败: ${error.message}</td>
+                </tr>
+            `;
+        }
+        
+        // 显示错误消息
+        showNotification(`清空日志失败: ${error.message}`, 'error');
+    });
 } 
