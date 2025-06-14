@@ -550,7 +550,7 @@ function startExperiment() {
         showNotification(`启动实验失败: ${error.message}`, 'error');
     });
 }
-
+// 去掉停止实验功能，这里会导致运行日志的bug。解决不了……
 // 停止实验
 // function stopExperiment() {
 //     // 更新UI显示正在停止
@@ -784,7 +784,9 @@ function renderLogs(logs, logsTableBody) {
                 <td>${log.startTime}</td>
                 <td><span class="status ${log.status}">${getStatusText(log.status)}</span></td>
                 <td>
-                    <button class="view-btn"><i class="fas fa-eye"></i></button>
+                    <button class="view-btn" data-exp-type="${log.type}" data-start-time="${log.startTime}">
+                        <i class="fas fa-eye"></i>
+                    </button>
                     <button class="download-btn"><i class="fas fa-download"></i></button>
                 </td>
             </tr>
@@ -792,6 +794,20 @@ function renderLogs(logs, logsTableBody) {
     });
     
     logsTableBody.innerHTML = html;
+    
+    // 添加眼睛按钮的点击事件监听器
+    const viewBtns = logsTableBody.querySelectorAll('.view-btn');
+    viewBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            let expType = this.getAttribute('data-exp-type');
+            const startTime = this.getAttribute('data-start-time');
+            
+            // 将显示名称转换为键名（如果需要的话）
+            expType = convertDisplayNameToKey(expType);
+            
+            showPklFilePathModal(expType, startTime);
+        });
+    });
 }
 
 // 获取状态文本
@@ -1062,4 +1078,162 @@ function clearLogs() {
         // 显示错误消息
         showNotification(`清空日志失败: ${error.message}`, 'error');
     });
+}
+
+// 显示PKL文件路径弹窗
+function showPklFilePathModal(expType, startTime) {
+    const pklFilePath = generatePklFilePath(expType, startTime);
+    
+    // 创建弹窗HTML
+    const modalHtml = `
+        <div class="modal-overlay" id="pkl-path-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-file-archive"></i> 实验结果文件位置</h3>
+                    <button class="modal-close" onclick="closePklPathModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="file-path-container">
+                        <label>PKL文件路径：</label>
+                        <div class="path-display">
+                            <input type="text" id="pkl-file-path" value="${pklFilePath}" readonly>
+                            <button class="copy-btn" onclick="copyPklPath()">
+                                <i class="fas fa-copy"></i> 复制
+                            </button>
+                        </div>
+                    </div>
+                    <div class="path-info">
+                        <p><strong>实验类型：</strong> ${getExperimentTypeName(expType)}</p>
+                        <p><strong>开始时间：</strong> ${startTime}</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-secondary" onclick="closePklPathModal()">关闭</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // 添加弹窗到页面
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // 显示弹窗
+    const modal = document.getElementById('pkl-path-modal');
+    modal.style.display = 'flex';
+    
+    // 点击遮罩层关闭弹窗
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closePklPathModal();
+        }
+    });
+}
+
+// 生成PKL文件路径
+function generatePklFilePath(expType, startTime) {
+    // 实验类型到目录的映射
+    const dirMap = {
+        'classifier': 'classifier',
+        'privacy_noise': 'privacy',
+        'privacy_query': 'privacy',
+        'related_video': 'related',
+        'related_web': 'related',
+        'video_bandwidth': 'video_bandwidth',
+        'web_bandwidth': 'web_bandwidth'
+    };
+    
+    // 实验类型到配置文件的映射
+    const configMap = {
+        'classifier': 'empirical_privacy',
+        'privacy_noise': 'privacy_loss_vs_noise_std',
+        'privacy_query': 'privacy_loss_vs_query_num',
+        'related_video': 'overhead_comparison_video',
+        'related_web': 'overhead_comparison_web',
+        'video_bandwidth': 'dp_interval_vs_overhead_video',
+        'web_bandwidth': 'dp_interval_vs_overhead_web'
+    };
+    
+    const dirName = dirMap[expType] || expType;
+    const configName = configMap[expType] || expType;
+    
+    // 将时间格式转换为文件名格式 (例如: 2025/5/14 11:35:06 -> 2025-05-14_11-35)
+    const timeFormatted = formatTimeForPath(startTime);
+    
+    return `/mnt/hgfs/共享文件夹/evaluation/${dirName}/results/${configName}(${timeFormatted})`;
+}
+
+// 格式化时间用于文件路径
+function formatTimeForPath(timeString) {
+    // 假设输入格式为 "2025/5/14 11:35:06"
+    // 输出格式为 "2025-05-14_11-35"
+    const date = new Date(timeString);
+    
+    if (isNaN(date.getTime())) {
+        // 如果时间格式不正确，直接返回原始字符串
+        return timeString.replace(/[/:]/g, '-').replace(/\s/g, '_').substring(0, 16);
+    }
+    
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}_${hours}-${minutes}`;
+}
+
+// 获取实验类型中文名称
+function getExperimentTypeName(expType) {
+    const typeNames = {
+        'classifier': 'Classifier',
+        'privacy_noise': 'Privacy Noise',
+        'privacy_query': 'Privacy Query',
+        'related_video': 'Related Video',
+        'related_web': 'Related Web',
+        'video_bandwidth': 'Video Bandwidth',
+        'web_bandwidth': 'Web Bandwidth'
+    };
+    
+    return typeNames[expType] || expType;
+}
+
+// 将显示名称转换为键名
+function convertDisplayNameToKey(displayName) {
+    const nameToKeyMap = {
+        'Classifier': 'classifier',
+        'Privacy Noise': 'privacy_noise',
+        'Privacy Query': 'privacy_query',
+        'Related Video': 'related_video',
+        'Related Web': 'related_web',
+        'Video Bandwidth': 'video_bandwidth',
+        'Web Bandwidth': 'web_bandwidth'
+    };
+    
+    // 如果是显示名称，则转换为键名；如果已经是键名，则直接返回
+    return nameToKeyMap[displayName] || displayName;
+}
+
+// 复制PKL文件路径到剪贴板
+function copyPklPath() {
+    const pathInput = document.getElementById('pkl-file-path');
+    pathInput.select();
+    pathInput.setSelectionRange(0, 99999); // 用于移动设备
+    
+    try {
+        document.execCommand('copy');
+        showNotification('路径已复制到剪贴板', 'success');
+    } catch (err) {
+        console.error('复制失败:', err);
+        showNotification('复制失败，请手动复制', 'error');
+    }
+}
+
+// 关闭PKL文件路径弹窗
+function closePklPathModal() {
+    const modal = document.getElementById('pkl-path-modal');
+    if (modal) {
+        modal.remove();
+    }
 } 
