@@ -455,6 +455,46 @@
     font-weight: 600;
 }
 
+/* 新增: DP-shield 介绍模块 */
+.dp-shield-intro {
+    background: var(--card-bg-color);
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 247, 255, 0.3);
+    box-shadow: 0 0 20px rgba(0, 247, 255, 0.25), var(--neon-box-shadow);
+    animation: fadeInRight 1s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.dp-shield-intro::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at center, rgba(0, 247, 255, 0.2) 0%, transparent 70%);
+    animation: pulse 4s infinite;
+    z-index: -1;
+}
+
+.dp-shield-intro h3 {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    text-shadow: 0 0 8px var(--primary-color);
+}
+
+.dp-shield-intro p {
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 10px;
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
 /* 用户列表 */
 .users-controls {
     display: flex;

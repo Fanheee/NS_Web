@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NetShaper - 控制面板</title>
+    <title>DP-shield - 控制面板</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/experiment-config.css">
@@ -16,8 +16,8 @@
     <div class="dashboard-container">
         <header class="dashboard-header">
             <div class="logo">
-                <h1>NetShaper</h1>
-                <p>差分隐私流量整形保护者</p>
+                <h1>DP-shield</h1>
+                <p>基于差分隐私的网络侧信道防护系统</p>
             </div>
             <div class="user-info">
                 <div class="user-avatar">
@@ -40,21 +40,9 @@
                             <i class="fas fa-home"></i>
                             <span>概览</span>
                         </li>
-                        <li data-tab="users-list">
-                            <i class="fas fa-users"></i>
-                            <span>用户列表</span>
-                        </li>
                         <li data-tab="privacy-shield">
                             <i class="fas fa-shield-alt"></i>
                             <span>隐私护盾</span>
-                        </li>
-                        <li data-tab="traffic-shaping">
-                            <i class="fas fa-project-diagram"></i>
-                            <span>流量整形</span>
-                        </li>
-                        <li data-tab="settings">
-                            <i class="fas fa-cog"></i>
-                            <span>设置</span>
                         </li>
                         <li data-tab="experiment">
                             <i class="fas fa-flask"></i>
@@ -68,6 +56,14 @@
                             <i class="fas fa-play-circle"></i>
                             <span>视频播放</span>
                         </li>
+                        <li data-tab="users-list">
+                            <i class="fas fa-users"></i>
+                            <span>用户列表</span>
+                        </li>
+                        <li data-tab="settings">
+                            <i class="fas fa-cog"></i>
+                            <span>设置</span>
+                        </li>
                     </ul>
                 </nav>
             </div>
@@ -75,6 +71,13 @@
             <div class="main-content">
                 <div class="tab-content active" id="overview">
                     <h2><i class="fas fa-home"></i> 系统概览</h2>
+                    <div class="dp-shield-intro">
+                        <h3>DP-shield 介绍</h3>
+                        <p>网络数据包的大小和时间会泄漏用户隐私信息，被不法分子利用侧信道攻击捕捉并利用，因此我们提出基于差分隐私的网络侧信道缓解系统 <strong>DP - shield</strong>，以应对加密流量形状泄漏隐私信息的攻击。</p>
+                        <p>该系统将流量整形建模为差分隐私问题，在host侧设计了支持窗口化DP保证的自适应整形策略：在发送端利用缓冲队列和DP生成带噪声的塑形流量，通过TQUIC 隧道传输STREAM帧，在接收端对流量去整形，实现双向独立整形， 使攻击者无法从塑形流量中推断原始数据。</p>
+                        <p>该系统包含Web 端可视化工具、命令行工具以及集成了整形功能的浏览器插件，不仅实时展示隐私参数与性能指标，还便于用户安装，实现了"安全 - 效率 - 体验" 的一体化集成。</p>
+                        <p>在安装DP-Shield后，原本能高精度识别加密流量内容的基于深度学习模型的攻击被弱化至接近随机猜测水平。</p>
+                    </div>
                     <div class="dashboard-stats">
                         <div class="stat-card">
                             <div class="stat-icon">
@@ -131,8 +134,7 @@
                     
                     <div class="welcome-message">
                         <h3>欢迎回来！</h3>
-                        <p>当前差分隐私流量整形保护系统运行正常，无需进行操作。</p>
-                        <p>最近一次更新: <span id="last-update">2023-07-15 08:30:45</span></p>
+                        <p>当前差分隐私流量整形保护系统运行正常。</p>
                     </div>
                 </div>
                 
