@@ -1,25 +1,25 @@
 {
   "logs": [
     {
-      "name": "Classifier测试-1748075460868",
-      "type": "Classifier",
-      "startTime": "2025/5/24 16:31:00",
-      "status": "running",
-      "id": 3
+      "name": "Related测试-1749885086598",
+      "type": "Related",
+      "startTime": "2025/6/14 15:11:26",
+      "id": 3,
+      "status": "completed"
     },
     {
-      "name": "Classifier测试-1748075453779",
-      "type": "Classifier",
-      "startTime": "2025/5/24 16:30:53",
-      "status": "running",
-      "id": 2
+      "name": "Web Bandwidth测试-1749885072341",
+      "type": "Web Bandwidth",
+      "startTime": "2025/6/14 15:11:12",
+      "id": 2,
+      "status": "completed"
     },
     {
-      "name": "Classifier测试-1748075447681",
+      "name": "Classifier测试-1749885052172",
       "type": "Classifier",
-      "startTime": "2025/5/24 16:30:47",
-      "status": "running",
-      "id": 1
+      "startTime": "2025/6/14 15:10:52",
+      "id": 1,
+      "status": "completed"
     }
   ]
 }

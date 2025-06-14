@@ -98,11 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 启动实验按钮
     if (startExperimentBtn) {
-        startExperimentBtn.addEventListener('click', function() {
-            if (!this.classList.contains('disabled')) {
-                startExperiment();
-            }
-        });
+        startExperimentBtn.addEventListener('click', startExperiment);
     }
     
     // 视频播放按钮
@@ -561,6 +557,7 @@ function stopExperiment() {
         
         // 恢复点击事件
         startExperimentBtn.removeEventListener('click', stopExperiment);
+        startExperimentBtn.removeEventListener('click', startExperiment);
         startExperimentBtn.addEventListener('click', startExperiment);
     }, 2000);
 }
@@ -576,7 +573,6 @@ function addExperimentLog(expType) {
         name: expName,
         type: getExperimentName(expType),
         startTime: formattedDate,
-        status: 'running'
     };
     
     // 发送API请求保存日志
