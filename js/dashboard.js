@@ -23,6 +23,7 @@ const pageBtns = document.querySelectorAll('.page-btn');
 // 当前登录用户信息
 let currentUser = null;
 let selectedExperiment = null;
+let selectedExperimentDir = null;
 let currentExperimentId = null;
 
 // 初始化页面
@@ -427,13 +428,16 @@ function selectExperiment(expType, card) {
     // 确保实验类型与虚拟机中的目录名一致
     const dirMap = {
         'classifier': 'classifier',
-        'privacy': 'privacy',
-        'related': 'related',
+        'privacy_noise': 'privacy',
+        'privacy_query': 'privacy',
+        'related_video': 'related',
+        'related_web': 'related',
         'video_bandwidth': 'video_bandwidth',
         'web_bandwidth': 'web_bandwidth'
     };
     
-    selectedExperiment = dirMap[expType] || expType;
+    selectedExperiment = expType;
+    selectedExperimentDir = dirMap[expType] || expType;
     
     // 更新UI
     experimentCards.forEach(c => c.classList.remove('selected'));
@@ -453,15 +457,17 @@ function selectExperiment(expType, card) {
     card.style.borderColor = 'var(--primary-color)';
     card.style.boxShadow = '0 0 20px rgba(0, 247, 255, 0.4)';
     
-    console.log(`已选择实验: ${selectedExperiment}, 配置文件路径: /mnt/hgfs/共享文件夹/netshaper/evaluation/${selectedExperiment}/configs/${getConfigFile(selectedExperiment)}`);
+    console.log(`已选择实验: ${selectedExperiment}, 目录: ${selectedExperimentDir}, 配置文件: ${getConfigFile(selectedExperiment)}.json`);
 }
 
 // 获取实验名称
 function getExperimentName(expType) {
     const nameMap = {
         'classifier': 'Classifier',
-        'privacy': 'Privacy',
-        'related': 'Related',
+        'privacy_noise': 'Privacy Noise',
+        'privacy_query': 'Privacy Query',
+        'related_video': 'Related Video',
+        'related_web': 'Related Web',
         'video_bandwidth': 'Video Bandwidth',
         'web_bandwidth': 'Web Bandwidth'
     };
@@ -471,18 +477,15 @@ function getExperimentName(expType) {
 
 // 获取配置文件
 function getConfigFile(expType) {
-    // 映射实验类型到对应的配置文件
     const configMap = {
         'classifier': 'empirical_privacy',
-        'privacy': 'privacy_loss_vs_noise_std',
-        'related': 'overhead_comparison_web',
+        'privacy_noise': 'privacy_loss_vs_noise_std',
+        'privacy_query': 'privacy_loss_vs_query_num',
+        'related_video': 'overhead_comparison_video',
+        'related_web': 'overhead_comparison_web',
         'video_bandwidth': 'dp_interval_vs_overhead_video',
-        'web_bandwidth': 'dp_interval_vs_overhead_web',
-        'video_latency': 'dp_interval_vs_overhead_video',
-        'web_latency': 'dp_interval_vs_overhead_web'
+        'web_bandwidth': 'dp_interval_vs_overhead_web'
     };
-    
-    // 返回虚拟机上对应的配置文件
     return configMap[expType] || `${expType}.json`;
 }
 
@@ -494,11 +497,11 @@ function startExperiment() {
     startExperimentBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> 启动中...`;
     startExperimentBtn.disabled = true;
     
-    // 获取对应的配置文件
+    // 获取对应的配置文件（不含.json）
     const configFile = getConfigFile(selectedExperiment);
     
     // 构建命令 - 使用虚拟机上的路径，添加nohup在后台运行
-    const command = `cd /mnt/hgfs/共享文件夹/netshaper/evaluation/${selectedExperiment} && nohup ./run.sh --experiment='${configFile}' --config_file='configs/${configFile}.json' > experiment_log.txt 2>&1 &`;
+    const command = `cd /mnt/hgfs/共享文件夹/netshaper/evaluation/${selectedExperimentDir} && nohup ./run.sh --experiment='${configFile}' --config_file='configs/${configFile}.json' > experiment_log.txt 2>&1 &`;
     
     // 执行终端命令
     fetch('http://localhost:3000/api/run-command', {

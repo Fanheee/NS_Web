@@ -263,26 +263,50 @@
                                 </div>
                             </div>
                             
-                            <div class="experiment-card" data-exp="privacy">
+                            <div class="experiment-card" data-exp="privacy_noise">
                                 <div class="exp-icon">
                                     <i class="fas fa-user-shield"></i>
                                 </div>
                                 <div class="exp-content">
-                                    <h4>Privacy</h4>
-                                    <p>隐私保护实验配置</p>
+                                    <h4>Privacy&nbsp;Noise</h4>
+                                    <p>隐私噪声实验配置</p>
+                                </div>
+                                <div class="exp-arrow">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
+                            <div class="experiment-card" data-exp="privacy_query">
+                                <div class="exp-icon">
+                                    <i class="fas fa-user-shield"></i>
+                                </div>
+                                <div class="exp-content">
+                                    <h4>Privacy&nbsp;Query</h4>
+                                    <p>隐私查询实验配置</p>
                                 </div>
                                 <div class="exp-arrow">
                                     <i class="fas fa-chevron-right"></i>
                                 </div>
                             </div>
                             
-                            <div class="experiment-card" data-exp="related">
+                            <div class="experiment-card" data-exp="related_video">
                                 <div class="exp-icon">
                                     <i class="fas fa-link"></i>
                                 </div>
                                 <div class="exp-content">
-                                    <h4>Related</h4>
-                                    <p>相关实验配置</p>
+                                    <h4>Related&nbsp;Video</h4>
+                                    <p>视频相关实验配置</p>
+                                </div>
+                                <div class="exp-arrow">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
+                            <div class="experiment-card" data-exp="related_web">
+                                <div class="exp-icon">
+                                    <i class="fas fa-link"></i>
+                                </div>
+                                <div class="exp-content">
+                                    <h4>Related&nbsp;Web</h4>
+                                    <p>网页相关实验配置</p>
                                 </div>
                                 <div class="exp-arrow">
                                     <i class="fas fa-chevron-right"></i>
@@ -294,20 +318,19 @@
                                     <i class="fas fa-video"></i>
                                 </div>
                                 <div class="exp-content">
-                                    <h4>Video Bandwidth</h4>
+                                    <h4>Video&nbsp;Bandwidth</h4>
                                     <p>视频带宽实验配置</p>
                                 </div>
                                 <div class="exp-arrow">
                                     <i class="fas fa-chevron-right"></i>
                                 </div>
                             </div>
-                            
                             <div class="experiment-card" data-exp="web_bandwidth">
                                 <div class="exp-icon">
                                     <i class="fas fa-globe"></i>
                                 </div>
                                 <div class="exp-content">
-                                    <h4>Web Bandwidth</h4>
+                                    <h4>Web&nbsp;Bandwidth</h4>
                                     <p>网页带宽实验配置</p>
                                 </div>
                                 <div class="exp-arrow">
@@ -344,8 +367,10 @@
                                 <select id="log-type">
                                     <option value="all">全部</option>
                                     <option value="classifier">Classifier</option>
-                                    <option value="privacy">Privacy</option>
-                                    <option value="related">Related</option>
+                                    <option value="privacy_noise">Privacy Noise</option>
+                                    <option value="privacy_query">Privacy Query</option>
+                                    <option value="related_video">Related Video</option>
+                                    <option value="related_web">Related Web</option>
                                     <option value="video_bandwidth">Video Bandwidth</option>
                                     <option value="web_bandwidth">Web Bandwidth</option>
                                 </select>

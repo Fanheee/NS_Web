@@ -78,8 +78,10 @@ function openExperimentConfig(expType) {
 function getExperimentName(expType) {
     const nameMap = {
         'classifier': 'Classifier',
-        'privacy': 'Privacy',
-        'related': 'Related',
+        'privacy_noise': 'Privacy Noise',
+        'privacy_query': 'Privacy Query',
+        'related_video': 'Related Video',
+        'related_web': 'Related Web',
         'video_bandwidth': 'Video Bandwidth',
         'web_bandwidth': 'Web Bandwidth'
     };
@@ -161,24 +163,45 @@ function loadExperimentConfig(expType, modal) {
             });
         });
     } else {
-        // 根据不同实验类型确定配置文件名
+        // 根据不同实验类型确定配置文件名以及所在目录
         let configFileName;
+        let configDir;
         switch(expType) {
             case 'classifier':
+                configDir = 'classifier';
                 configFileName = 'empirical_privacy.json';
                 break;
+            case 'privacy_noise':
+                configDir = 'privacy';
+                configFileName = 'privacy_loss_vs_noise_std.json';
+                break;
+            case 'privacy_query':
+                configDir = 'privacy';
+                configFileName = 'privacy_loss_vs_query_num.json';
+                break;
+            case 'related_video':
+                configDir = 'related';
+                configFileName = 'overhead_comparison_video.json';
+                break;
+            case 'related_web':
+                configDir = 'related';
+                configFileName = 'overhead_comparison_web.json';
+                break;
             case 'video_bandwidth':
+                configDir = 'video_bandwidth';
                 configFileName = 'dp_interval_vs_overhead_video.json';
                 break;
             case 'web_bandwidth':
+                configDir = 'web_bandwidth';
                 configFileName = 'dp_interval_vs_overhead_web.json';
                 break;
             default:
+                configDir = expType;
                 configFileName = `${expType}.json`;
         }
         
         // 其他实验类型，直接加载配置
-        fetch(`/config/${expType}/${configFileName}`)
+        fetch(`/config/${configDir}/${configFileName}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('无法获取配置文件');
