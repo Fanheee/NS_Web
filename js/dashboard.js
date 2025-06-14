@@ -527,7 +527,7 @@ function startExperiment() {
             statusInfo.style.color = 'var(--primary-color)';
         }
         
-        startExperimentBtn.innerHTML = `<i class="fas fa-stop"></i> 终止运行`;
+        startExperimentBtn.innerHTML = `<i class="fas fa-stop"></i> 成功运行`;
         startExperimentBtn.disabled = false;
         
         // 添加实验记录到日志
@@ -538,7 +538,7 @@ function startExperiment() {
         
         // 添加点击事件以停止实验
         startExperimentBtn.removeEventListener('click', startExperiment);
-        startExperimentBtn.addEventListener('click', stopExperiment);
+        //startExperimentBtn.addEventListener('click', stopExperiment);
     })
     .catch(error => {
         console.error('执行命令失败:', error);
@@ -549,92 +549,92 @@ function startExperiment() {
 }
 
 // 停止实验
-function stopExperiment() {
-    // 更新UI显示正在停止
-    startExperimentBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> 终止中...`;
-    startExperimentBtn.disabled = true;
+// function stopExperiment() {
+//     // 更新UI显示正在停止
+//     startExperimentBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> 终止中...`;
+//     startExperimentBtn.disabled = true;
     
-    // 执行终止命令 - 在Linux虚拟机上使用pkill
-    const command = 'pkill -f run.sh';
+//     // 执行终止命令 - 在Linux虚拟机上使用pkill
+//     const command = 'pkill -f run.sh';
     
-    fetch('http://localhost:3000/api/run-command', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            command: command
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('终止命令执行结果:', data);
+//     fetch('http://localhost:3000/api/run-command', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify({
+//             command: command
+//         })
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         console.log('终止命令执行结果:', data);
         
-        // 如果有当前实验ID，更新状态
-        if (currentExperimentId) {
-            return fetch(`http://localhost:3000/api/experiments/${currentExperimentId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    status: 'completed'
-                })
-            });
-        }
-    })
-    .then(response => {
-        if (response) return response.json();
-    })
-    .then(updateData => {
-        if (updateData && updateData.success) {
-            console.log('实验日志已更新:', updateData.log);
-        } else if (updateData) {
-            console.error('更新实验日志失败:', updateData.message);
-        }
+//         // 如果有当前实验ID，更新状态
+//         if (currentExperimentId) {
+//             return fetch(`http://localhost:3000/api/experiments/${currentExperimentId}`, {
+//                 method: 'PUT',
+//                 headers: {
+//                     'Content-Type': 'application/json',
+//                 },
+//                 body: JSON.stringify({
+//                     status: 'completed'
+//                 })
+//             });
+//         }
+//     })
+//     .then(response => {
+//         if (response) return response.json();
+//     })
+//     .then(updateData => {
+//         if (updateData && updateData.success) {
+//             console.log('实验日志已更新:', updateData.log);
+//         } else if (updateData) {
+//             console.error('更新实验日志失败:', updateData.message);
+//         }
         
-        // 清除当前实验ID
-        currentExperimentId = null;
+//         // 清除当前实验ID
+//         currentExperimentId = null;
         
-        // 更新UI状态
-        const statusIcon = document.querySelector('.status-icon i');
-        const statusInfo = document.querySelector('.status-info p');
+//         // 更新UI状态
+//         const statusIcon = document.querySelector('.status-icon i');
+//         const statusInfo = document.querySelector('.status-info p');
         
-        if (statusIcon) {
-            statusIcon.className = 'fas fa-circle-notch fa-spin';
-        }
+//         if (statusIcon) {
+//             statusIcon.className = 'fas fa-circle-notch fa-spin';
+//         }
         
-        if (statusInfo) {
-            statusInfo.textContent = `无实验运行中`;
-            statusInfo.style.color = '';
-        }
+//         if (statusInfo) {
+//             statusInfo.textContent = `无实验运行中`;
+//             statusInfo.style.color = '';
+//         }
         
-        startExperimentBtn.innerHTML = `<i class="fas fa-play"></i> 启动实验`;
-        startExperimentBtn.disabled = false;
-        startExperimentBtn.classList.add('disabled');
+//         startExperimentBtn.innerHTML = `<i class="fas fa-play"></i> 启动实验`;
+//         startExperimentBtn.disabled = false;
+//         startExperimentBtn.classList.add('disabled');
         
-        // 清除选中的实验
-        selectedExperiment = null;
-        experimentCards.forEach(c => {
-            c.classList.remove('selected');
-            c.style.borderColor = '';
-            c.style.boxShadow = '';
-        });
+//         // 清除选中的实验
+//         selectedExperiment = null;
+//         experimentCards.forEach(c => {
+//             c.classList.remove('selected');
+//             c.style.borderColor = '';
+//             c.style.boxShadow = '';
+//         });
         
-        // 显示成功消息
-        showNotification(`实验已成功终止`, 'success');
+//         // 显示成功消息
+//         showNotification(`实验已成功终止`, 'success');
         
-        // 恢复点击事件
-        startExperimentBtn.removeEventListener('click', stopExperiment);
-        startExperimentBtn.addEventListener('click', startExperiment);
-    })
-    .catch(error => {
-        console.error('执行命令失败:', error);
-        startExperimentBtn.innerHTML = `<i class="fas fa-stop"></i> 终止运行`;
-        startExperimentBtn.disabled = false;
-        showNotification(`终止实验失败: ${error.message}`, 'error');
-    });
-}
+//         // 恢复点击事件
+//         //startExperimentBtn.removeEventListener('click', stopExperiment);
+//         startExperimentBtn.addEventListener('click', startExperiment);
+//     })
+//     .catch(error => {
+//         console.error('执行命令失败:', error);
+//         startExperimentBtn.innerHTML = `<i class="fas fa-stop"></i> 终止运行`;
+//         startExperimentBtn.disabled = false;
+//         showNotification(`终止实验失败: ${error.message}`, 'error');
+//     });
+// }
 
 // 添加实验记录到日志
 function addExperimentLog(expType) {
@@ -647,6 +647,7 @@ function addExperimentLog(expType) {
         name: expName,
         type: getExperimentName(expType),
         startTime: formattedDate,
+        status: 'completed'
     };
     
     // 发送API请求保存日志

@@ -1,25 +1,3 @@
 {
-  "logs": [
-    {
-      "name": "Related测试-1749885086598",
-      "type": "Related",
-      "startTime": "2025/6/14 15:11:26",
-      "id": 3,
-      "status": "completed"
-    },
-    {
-      "name": "Web Bandwidth测试-1749885072341",
-      "type": "Web Bandwidth",
-      "startTime": "2025/6/14 15:11:12",
-      "id": 2,
-      "status": "completed"
-    },
-    {
-      "name": "Classifier测试-1749885052172",
-      "type": "Classifier",
-      "startTime": "2025/6/14 15:10:52",
-      "id": 1,
-      "status": "completed"
-    }
-  ]
+  "logs": []
 }
