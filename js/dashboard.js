@@ -98,7 +98,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 启动实验按钮
     if (startExperimentBtn) {
-        startExperimentBtn.addEventListener('click', startExperiment);
+        startExperimentBtn.addEventListener('click', function() {
+            if (!this.classList.contains('disabled')) {
+                startExperiment();
+            }
+        });
     }
     
     // 视频播放按钮

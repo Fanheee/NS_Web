@@ -262,6 +262,49 @@ app.delete('/api/experiments', (req, res) => {
     }
 });
 
+// 执行终端命令API
+app.post('/api/run-command', (req, res) => {
+    try {
+        const { command } = req.body;
+        
+        if (!command) {
+            return res.status(400).json({ success: false, message: '命令不能为空' });
+        }
+        
+        const { exec } = require('child_process');
+        
+        console.log(`准备执行命令: ${command}`);
+        
+        // 执行命令 - 在Linux虚拟机上执行
+        exec(command, { shell: '/bin/bash' }, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`执行命令错误: ${error.message}`);
+                return res.status(500).json({ 
+                    success: false, 
+                    message: '执行命令失败', 
+                    error: error.message 
+                });
+            }
+            
+            if (stderr) {
+                console.error(`命令标准错误: ${stderr}`);
+            }
+            
+            console.log(`命令标准输出: ${stdout}`);
+            
+            res.json({ 
+                success: true, 
+                message: '命令执行成功',
+                stdout: stdout,
+                stderr: stderr
+            });
+        });
+    } catch (error) {
+        console.error('API错误:', error);
+        res.status(500).json({ success: false, message: '服务器错误' });
+    }
+});
+
 // 启动服务器
 app.listen(port, () => {
     ensureUserFileExists();
