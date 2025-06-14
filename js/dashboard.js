@@ -420,7 +420,16 @@ function animateCharts() {
 
 // 选择实验类型
 function selectExperiment(expType, card) {
-    selectedExperiment = expType;
+    // 确保实验类型与虚拟机中的目录名一致
+    const dirMap = {
+        'classifier': 'classifier',
+        'privacy': 'privacy',
+        'related': 'related',
+        'video_bandwidth': 'video_bandwidth',
+        'web_bandwidth': 'web_bandwidth'
+    };
+    
+    selectedExperiment = dirMap[expType] || expType;
     
     // 更新UI
     experimentCards.forEach(c => c.classList.remove('selected'));
@@ -439,6 +448,8 @@ function selectExperiment(expType, card) {
     // 添加选中样式
     card.style.borderColor = 'var(--primary-color)';
     card.style.boxShadow = '0 0 20px rgba(0, 247, 255, 0.4)';
+    
+    console.log(`已选择实验: ${selectedExperiment}, 配置文件路径: /mnt/hgfs/共享文件夹/netshaper/evaluation/${selectedExperiment}/configs/${getConfigFile(selectedExperiment)}`);
 }
 
 // 获取实验名称
@@ -454,6 +465,23 @@ function getExperimentName(expType) {
     return nameMap[expType] || expType;
 }
 
+// 获取配置文件
+function getConfigFile(expType) {
+    // 映射实验类型到对应的配置文件
+    const configMap = {
+        'classifier': 'empirical_privacy',
+        'privacy': 'privacy_loss_vs_noise_std',
+        'related': 'overhead_comparison_web',
+        'video_bandwidth': 'dp_interval_vs_overhead_video',
+        'web_bandwidth': 'dp_interval_vs_overhead_web',
+        'video_latency': 'dp_interval_vs_overhead_video',
+        'web_latency': 'dp_interval_vs_overhead_web'
+    };
+    
+    // 返回虚拟机上对应的配置文件
+    return configMap[expType] || `${expType}.json`;
+}
+
 // 启动实验
 function startExperiment() {
     if (!selectedExperiment) return;
@@ -462,8 +490,26 @@ function startExperiment() {
     startExperimentBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> 启动中...`;
     startExperimentBtn.disabled = true;
     
-    // 模拟API请求启动实验
-    setTimeout(() => {
+    // 获取对应的配置文件
+    const configFile = getConfigFile(selectedExperiment);
+    
+    // 构建命令 - 使用虚拟机上的路径，添加nohup在后台运行
+    const command = `cd /mnt/hgfs/共享文件夹/netshaper/evaluation/${selectedExperiment} && nohup ./run.sh --experiment='${configFile}' --config_file='configs/${configFile}.json' > experiment_log.txt 2>&1 &`;
+    
+    // 执行终端命令
+    fetch('http://localhost:3000/api/run-command', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            command: command
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('命令执行结果:', data);
+        
         // 显示实验已启动
         const statusIcon = document.querySelector('.status-icon i');
         const statusInfo = document.querySelector('.status-info p');
@@ -489,7 +535,13 @@ function startExperiment() {
         // 添加点击事件以停止实验
         startExperimentBtn.removeEventListener('click', startExperiment);
         startExperimentBtn.addEventListener('click', stopExperiment);
-    }, 2000);
+    })
+    .catch(error => {
+        console.error('执行命令失败:', error);
+        startExperimentBtn.innerHTML = `<i class="fas fa-play"></i> 启动实验`;
+        startExperimentBtn.disabled = false;
+        showNotification(`启动实验失败: ${error.message}`, 'error');
+    });
 }
 
 // 停止实验
@@ -498,11 +550,25 @@ function stopExperiment() {
     startExperimentBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> 终止中...`;
     startExperimentBtn.disabled = true;
     
-    // 模拟API请求停止实验
-    setTimeout(() => {
-        // 如果有当前实验ID，直接更新状态
+    // 执行终止命令 - 在Linux虚拟机上使用pkill
+    const command = 'pkill -f run.sh';
+    
+    fetch('http://localhost:3000/api/run-command', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            command: command
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('终止命令执行结果:', data);
+        
+        // 如果有当前实验ID，更新状态
         if (currentExperimentId) {
-            fetch(`http://localhost:3000/api/experiments/${currentExperimentId}`, {
+            return fetch(`http://localhost:3000/api/experiments/${currentExperimentId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -510,22 +576,21 @@ function stopExperiment() {
                 body: JSON.stringify({
                     status: 'completed'
                 })
-            })
-            .then(response => response.json())
-            .then(updateData => {
-                if (updateData.success) {
-                    console.log('实验日志已更新:', updateData.log);
-                } else {
-                    console.error('更新实验日志失败:', updateData.message);
-                }
-            })
-            .catch(error => {
-                console.error('API请求错误:', error);
             });
-            
-            // 清除当前实验ID
-            currentExperimentId = null;
         }
+    })
+    .then(response => {
+        if (response) return response.json();
+    })
+    .then(updateData => {
+        if (updateData && updateData.success) {
+            console.log('实验日志已更新:', updateData.log);
+        } else if (updateData) {
+            console.error('更新实验日志失败:', updateData.message);
+        }
+        
+        // 清除当前实验ID
+        currentExperimentId = null;
         
         // 更新UI状态
         const statusIcon = document.querySelector('.status-icon i');
@@ -557,9 +622,14 @@ function stopExperiment() {
         
         // 恢复点击事件
         startExperimentBtn.removeEventListener('click', stopExperiment);
-        startExperimentBtn.removeEventListener('click', startExperiment);
         startExperimentBtn.addEventListener('click', startExperiment);
-    }, 2000);
+    })
+    .catch(error => {
+        console.error('执行命令失败:', error);
+        startExperimentBtn.innerHTML = `<i class="fas fa-stop"></i> 终止运行`;
+        startExperimentBtn.disabled = false;
+        showNotification(`终止实验失败: ${error.message}`, 'error');
+    });
 }
 
 // 添加实验记录到日志
