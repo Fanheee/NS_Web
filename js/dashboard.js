@@ -94,15 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 图表动画
     animateCharts();
     
-    // 实验卡片点击事件
-    if (experimentCards) {
-        experimentCards.forEach(card => {
-            card.addEventListener('click', function() {
-                const expType = this.getAttribute('data-exp');
-                selectExperiment(expType, this);
-            });
-        });
-    }
+    // 实验卡片点击事件已移至experiment-config.js中处理
     
     // 启动实验按钮
     if (startExperimentBtn) {
@@ -496,7 +488,7 @@ function startExperiment() {
         addExperimentLog(selectedExperiment);
         
         // 显示成功消息
-        showNotification(`${getExperimentName(selectedExperiment)} 实验已成功启动`, 'success');
+        showNotification(`实验已成功启动`, 'success');
         
         // 添加点击事件以停止实验
         startExperimentBtn.removeEventListener('click', startExperiment);

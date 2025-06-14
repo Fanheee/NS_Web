@@ -1,0 +1,7 @@
+{
+  "sensitivity" : 2.5e6,
+  "delta" : 1e-6,
+  "num_of_queries" : [1, 4, 16, 64],
+  "results_dir": "results/",
+  "plot_dir": "plots/"
+}

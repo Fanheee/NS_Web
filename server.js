@@ -9,6 +9,30 @@ const port = 3000;
 app.use(bodyParser.json());
 app.use(express.static('.'));
 
+// 提供配置文件API
+app.get('/config/:expType/:configFile', (req, res) => {
+    try {
+        const { expType, configFile } = req.params;
+        const configPath = path.join(__dirname, 'config', expType, configFile);
+        
+        if (!fs.existsSync(configPath)) {
+            return res.status(404).json({ 
+                success: false, 
+                message: '配置文件不存在' 
+            });
+        }
+        
+        const configData = fs.readFileSync(configPath, 'utf8');
+        res.json(JSON.parse(configData));
+    } catch (error) {
+        console.error('读取配置文件错误:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: '服务器错误' 
+        });
+    }
+});
+
 // 用户数据文件路径
 const usersFilePath = path.join(__dirname, 'data', 'users.json');
 // 实验日志文件路径

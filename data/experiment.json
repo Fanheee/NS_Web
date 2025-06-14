@@ -1,86 +1,23 @@
 {
   "logs": [
     {
-      "name": "Video Bandwidth测试-1748074424622",
-      "type": "Video Bandwidth",
-      "startTime": "2025/5/24 16:13:44",
-      "status": "running",
-      "id": 12
-    },
-    {
-      "name": "Video Bandwidth测试-1748074411597",
-      "type": "Video Bandwidth",
-      "startTime": "2025/5/24 16:13:31",
-      "status": "completed",
-      "id": 11
-    },
-    {
-      "name": "Video Bandwidth测试-1748074411596",
-      "type": "Video Bandwidth",
-      "startTime": "2025/5/24 16:13:31",
-      "status": "running",
-      "id": 10
-    },
-    {
-      "name": "Related测试-1748074400307",
-      "type": "Related",
-      "startTime": "2025/5/24 16:13:20",
-      "status": "running",
-      "id": 9
-    },
-    {
-      "name": "Privacy测试-1748074391125",
-      "type": "Privacy",
-      "startTime": "2025/5/24 16:13:11",
-      "status": "completed",
-      "id": 8
-    },
-    {
-      "name": "Privacy测试-1748074391124",
-      "type": "Privacy",
-      "startTime": "2025/5/24 16:13:11",
-      "status": "running",
-      "id": 7
-    },
-    {
-      "name": "Privacy测试-1748074384392",
-      "type": "Privacy",
-      "startTime": "2025/5/24 16:13:04",
-      "status": "running",
-      "id": 6
-    },
-    {
-      "name": "Classifier测试-1748074367731",
+      "name": "Classifier测试-1748075460868",
       "type": "Classifier",
-      "startTime": "2025/5/24 16:12:47",
-      "status": "completed",
-      "id": 5
-    },
-    {
-      "name": "Classifier测试-1748074367729",
-      "type": "Classifier",
-      "startTime": "2025/5/24 16:12:47",
-      "status": "running",
-      "id": 4
-    },
-    {
-      "name": "Classifier测试-1748074359638",
-      "type": "Classifier",
-      "startTime": "2025/5/24 16:12:39",
+      "startTime": "2025/5/24 16:31:00",
       "status": "running",
       "id": 3
     },
     {
-      "name": "Classifier测试-1748074356464",
+      "name": "Classifier测试-1748075453779",
       "type": "Classifier",
-      "startTime": "2025/5/24 16:12:36",
-      "status": "completed",
+      "startTime": "2025/5/24 16:30:53",
+      "status": "running",
       "id": 2
     },
     {
-      "name": "Web Bandwidth测试-1748074348739",
-      "type": "Web Bandwidth",
-      "startTime": "2025/5/24 16:12:28",
+      "name": "Classifier测试-1748075447681",
+      "type": "Classifier",
+      "startTime": "2025/5/24 16:30:47",
       "status": "running",
       "id": 1
     }

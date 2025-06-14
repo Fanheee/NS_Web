@@ -1,0 +1,399 @@
+/* 实验配置弹窗样式 */
+
+/* 弹窗容器 */
+.experiment-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+/* 弹窗内容 */
+.experiment-modal-content {
+    background-color: var(--dark-bg-color);
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+    width: 80%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: modalFadeIn 0.3s ease-out;
+    border: 1px solid var(--primary-color);
+}
+
+/* 弹窗头部 */
+.modal-header {
+    background-color: var(--card-bg-color);
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+    color: var(--primary-color);
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.close-modal {
+    font-size: 1.8rem;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-modal:hover {
+    color: var(--primary-color);
+}
+
+/* 弹窗主体 */
+.modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+    max-height: 60vh;
+}
+
+/* 加载动画 */
+.loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+}
+
+.loading-spinner i {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.loading-spinner p {
+    color: var(--text-color);
+    font-size: 1.1rem;
+}
+
+/* 错误消息 */
+.error-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 0;
+}
+
+.error-message i {
+    font-size: 2.5rem;
+    color: #ff5757;
+    margin-bottom: 15px;
+}
+
+.error-message p {
+    color: #ff5757;
+    font-size: 1.1rem;
+}
+
+/* 弹窗底部 */
+.modal-footer {
+    padding: 15px 20px;
+    display: flex;
+    justify-content: flex-end;
+    background-color: var(--card-bg-color);
+    border-top: 1px solid var(--border-color);
+}
+
+.modal-footer button {
+    padding: 8px 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.cancel-btn {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    margin-right: 10px;
+}
+
+.cancel-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.apply-btn {
+    background-color: var(--primary-color);
+    border: none;
+    color: var(--dark-bg-color);
+    font-weight: 500;
+}
+
+.apply-btn:hover {
+    background-color: #00e0e0;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+}
+
+/* 配置类型选择 */
+.config-type-selection {
+    margin-bottom: 20px;
+}
+
+.config-type-selection h4 {
+    color: var(--text-color);
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.config-options {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.config-option {
+    flex: 1;
+    min-width: 250px;
+    background-color: var(--card-bg-color);
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.config-option i {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.config-option h5 {
+    color: var(--text-color);
+    margin: 0 0 10px 0;
+    font-size: 1.1rem;
+}
+
+.config-option p {
+    color: var(--text-muted);
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.config-option:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    border-color: var(--primary-color);
+}
+
+.config-option.selected {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 20px rgba(0, 247, 255, 0.3);
+}
+
+/* 配置表单 */
+.config-form-container {
+    margin-top: 20px;
+    background-color: var(--card-bg-color);
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.config-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    color: var(--text-color);
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.form-group input {
+    background-color: var(--dark-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    padding: 10px;
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.form-group input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+}
+
+/* 数组输入容器 */
+.array-input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.array-input-item {
+    display: flex;
+    align-items: center;
+}
+
+.array-input-item input {
+    flex: 1;
+}
+
+.add-array-item, .remove-array-item {
+    background-color: transparent;
+    border: none;
+    color: var(--primary-color);
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 5px;
+    margin-left: 10px;
+    transition: all 0.2s;
+}
+
+.add-array-item:hover {
+    color: #00e0e0;
+    transform: scale(1.1);
+}
+
+.remove-array-item {
+    color: #ff5757;
+}
+
+.remove-array-item:hover {
+    color: #ff0000;
+    transform: scale(1.1);
+}
+
+/* 通知容器 */
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1100;
+    max-width: 350px;
+}
+
+/* 通知样式 */
+.notification {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: var(--dark-bg-color);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    animation: notificationFadeIn 0.3s forwards;
+    border-left: 4px solid;
+}
+
+.notification.info {
+    border-color: #3498db;
+}
+
+.notification.success {
+    border-color: #2ecc71;
+}
+
+.notification.warning {
+    border-color: #f39c12;
+}
+
+.notification.error {
+    border-color: #e74c3c;
+}
+
+.notification i {
+    font-size: 1.5rem;
+    margin-right: 15px;
+}
+
+.notification.info i {
+    color: #3498db;
+}
+
+.notification.success i {
+    color: #2ecc71;
+}
+
+.notification.warning i {
+    color: #f39c12;
+}
+
+.notification.error i {
+    color: #e74c3c;
+}
+
+.notification p {
+    flex: 1;
+    margin: 0;
+    color: var(--text-color);
+}
+
+.close-notification {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.close-notification:hover {
+    color: var(--text-color);
+}
+
+/* 实验卡片配置后的样式 */
+.experiment-card.configured {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 15px rgba(0, 247, 255, 0.3);
+}
+
+/* 动画 */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes notificationFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+} 
