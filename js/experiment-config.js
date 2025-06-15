@@ -55,20 +55,45 @@ function openExperimentConfig(expType) {
     // 给关闭按钮添加事件
     const closeBtn = modal.querySelector('.close-modal');
     closeBtn.addEventListener('click', () => {
-        document.body.removeChild(modal);
+        closeModal(modal);
     });
     
     // 给取消按钮添加事件
     const cancelBtn = modal.querySelector('.cancel-btn');
     cancelBtn.addEventListener('click', () => {
-        document.body.removeChild(modal);
+        closeModal(modal);
     });
     
     // 给应用按钮添加事件
     const applyBtn = modal.querySelector('.apply-btn');
-    applyBtn.addEventListener('click', () => {
-        applyExperimentConfig(expType, modal);
-    });
+    if (applyBtn) {
+        // 移除可能存在的旧事件监听器
+        applyBtn.onclick = null;
+        
+        // 添加新的事件监听器
+        applyBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // 防止重复点击
+            if (applyBtn.disabled) return;
+            applyBtn.disabled = true;
+            applyBtn.textContent = '处理中...';
+            
+            // 延迟执行，确保UI更新
+            setTimeout(() => {
+                applyExperimentConfig(expType, modal);
+            }, 100);
+        });
+        
+        // 备用的直接onclick处理
+        applyBtn.onclick = function(e) {
+            if (e.defaultPrevented) return;
+            e.preventDefault();
+            e.stopPropagation();
+            applyExperimentConfig(expType, modal);
+        };
+    }
     
     // 加载实验配置参数
     loadExperimentConfig(expType, modal);
@@ -365,40 +390,75 @@ function formatLabel(key) {
 
 // 应用实验配置
 function applyExperimentConfig(expType, modal) {
-    // 获取表单数据
-    const form = modal.querySelector('.config-form');
-    
-    if (!form) {
-        showNotification('请先选择配置类型', 'warning');
-        return;
-    }
-    
-    const formData = new FormData(form);
-    const configData = {};
-    
-    // 处理表单数据
-    for (const [key, value] of formData.entries()) {
-        // 处理数组
-        if (key.endsWith('[]')) {
-            const arrayKey = key.substring(0, key.length - 2);
-            if (!configData[arrayKey]) {
-                configData[arrayKey] = [];
+    try {
+        // 获取表单数据
+        const form = modal.querySelector('.config-form');
+        
+        if (!form) {
+            showNotification('请先选择配置类型', 'warning');
+            return;
+        }
+        
+        const formData = new FormData(form);
+        const configData = {};
+        
+        // 处理表单数据
+        for (const [key, value] of formData.entries()) {
+            // 处理数组
+            if (key.endsWith('[]')) {
+                const arrayKey = key.substring(0, key.length - 2);
+                if (!configData[arrayKey]) {
+                    configData[arrayKey] = [];
+                }
+                configData[arrayKey].push(value);
+            } else {
+                configData[key] = value;
             }
-            configData[arrayKey].push(value);
-        } else {
-            configData[key] = value;
+        }
+        
+        // 显示应用成功的消息
+        showNotification('配置已成功应用', 'success');
+        
+        // 更新UI，显示实验已配置
+        updateExperimentUI(expType, configData.config_type);
+    } finally {
+        // 确保弹窗被关闭，多种方式尝试
+        closeModal(modal);
+    }
+}
+
+// 专门的关闭弹窗函数
+function closeModal(modal) {
+    try {
+        // 方法1: 直接移除modal
+        if (modal && modal.parentElement) {
+            modal.parentElement.removeChild(modal);
+            return;
+        }
+        
+        // 方法2: 通过document.body移除
+        if (modal && document.body.contains(modal)) {
+            document.body.removeChild(modal);
+            return;
+        }
+        
+        // 方法3: 查找所有实验弹窗并移除
+        const allModals = document.querySelectorAll('.experiment-modal');
+        allModals.forEach(m => {
+            if (m.parentElement) {
+                m.parentElement.removeChild(m);
+            }
+        });
+        
+    } catch (error) {
+        // 最后的备用方案: 隐藏弹窗
+        if (modal) {
+            modal.style.display = 'none';
+            modal.style.visibility = 'hidden';
+            modal.style.opacity = '0';
+            modal.style.pointerEvents = 'none';
         }
     }
-    
-    // 这里可以添加保存配置到服务器的代码
-    // 现在只是显示应用成功的消息
-    showNotification('配置已成功应用', 'success');
-    
-    // 关闭弹窗
-    document.body.removeChild(modal);
-    
-    // 更新UI，显示实验已配置
-    updateExperimentUI(expType, configData.config_type);
 }
 
 // 更新实验UI状态
@@ -492,4 +552,19 @@ function showNotification(message, type = 'info') {
             notificationContainer.removeChild(notification);
         }
     }, 5000);
-} 
+}
+
+// 紧急关闭所有弹窗的函数（调试用）
+window.forceCloseModals = function() {
+    const modals = document.querySelectorAll('.experiment-modal');
+    modals.forEach(modal => {
+        try {
+            if (modal.parentElement) {
+                modal.parentElement.removeChild(modal);
+            }
+        } catch (e) {
+            modal.style.display = 'none';
+        }
+    });
+    console.log('强制关闭了', modals.length, '个弹窗');
+}; 

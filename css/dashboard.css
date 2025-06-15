@@ -257,10 +257,11 @@
 /* 主内容区 */
 .main-content {
     flex: 1;
-    padding: 30px;
+    padding: 40px;
     overflow-y: auto;
     background: rgba(4, 8, 24, 0.3);
     animation: fadeInRight 0.8s ease-out;
+    max-height: calc(100vh - var(--header-height));
 }
 
 .tab-content {
@@ -1978,5 +1979,207 @@
     to {
         transform: translateY(0);
         opacity: 1;
+    }
+}
+
+/* PDF下载弹窗特殊样式 */
+.download-note {
+    background: rgba(0, 247, 255, 0.1);
+    border: 1px solid rgba(0, 247, 255, 0.2);
+    border-radius: 6px;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.download-note i {
+    color: var(--primary-color);
+    margin-right: 5px;
+}
+
+/* 原理介绍样式 */
+.principle-intro {
+    background: rgba(13, 20, 41, 0.8);
+    border-radius: 15px;
+    padding: 35px;
+    margin-bottom: 40px;
+    border: 1px solid rgba(0, 247, 255, 0.2);
+    backdrop-filter: blur(10px);
+    text-align: center;
+}
+
+.principle-intro h3 {
+    color: var(--primary-color);
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+    text-shadow: 0 0 10px rgba(0, 247, 255, 0.3);
+}
+
+.principle-intro p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.principle-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.principle-card {
+    background: rgba(13, 20, 41, 0.6);
+    border-radius: 15px;
+    padding: 35px;
+    border: 1px solid rgba(0, 247, 255, 0.2);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    min-height: 200px;
+}
+
+.principle-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 247, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.principle-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-color);
+    box-shadow: 0 10px 30px rgba(0, 247, 255, 0.2);
+}
+
+.principle-card:hover::before {
+    left: 100%;
+}
+
+.principle-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 15px;
+    background: rgba(0, 247, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    border: 1px solid rgba(0, 247, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.principle-card:hover .principle-icon {
+    background: rgba(0, 247, 255, 0.2);
+    box-shadow: 0 0 15px rgba(0, 247, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.principle-content h4 {
+    color: var(--text-color);
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    transition: color 0.3s ease;
+}
+
+.principle-content p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin: 0;
+    transition: color 0.3s ease;
+}
+
+.principle-card:hover .principle-content h4 {
+    color: var(--primary-color);
+}
+
+.principle-card:hover .principle-content p {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.principle-summary {
+    background: rgba(13, 20, 41, 0.8);
+    border-radius: 15px;
+    padding: 35px;
+    border: 1px solid rgba(0, 255, 127, 0.2);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    transition: all 0.3s ease;
+}
+
+.principle-summary:hover {
+    border-color: var(--accent-color);
+    box-shadow: 0 5px 20px rgba(0, 255, 127, 0.2);
+}
+
+.summary-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(0, 255, 127, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    color: var(--accent-color);
+    border: 1px solid rgba(0, 255, 127, 0.3);
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.principle-summary:hover .summary-icon {
+    background: rgba(0, 255, 127, 0.2);
+    box-shadow: 0 0 15px rgba(0, 255, 127, 0.3);
+    transform: scale(1.1);
+}
+
+.summary-content h4 {
+    color: var(--accent-color);
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.summary-content p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin: 0;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .principle-cards {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .principle-card {
+        padding: 20px;
+    }
+    
+    .principle-summary {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .summary-icon {
+        margin: 0 auto;
     }
 } 

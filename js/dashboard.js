@@ -787,7 +787,9 @@ function renderLogs(logs, logsTableBody) {
                     <button class="view-btn" data-exp-type="${log.type}" data-start-time="${log.startTime}">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="download-btn"><i class="fas fa-download"></i></button>
+                    <button class="download-btn" data-exp-type="${log.type}">
+                        <i class="fas fa-download"></i>
+                    </button>
                 </td>
             </tr>
         `;
@@ -806,6 +808,19 @@ function renderLogs(logs, logsTableBody) {
             expType = convertDisplayNameToKey(expType);
             
             showPklFilePathModal(expType, startTime);
+        });
+    });
+    
+    // 添加下载按钮的点击事件监听器
+    const downloadBtns = logsTableBody.querySelectorAll('.download-btn');
+    downloadBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            let expType = this.getAttribute('data-exp-type');
+            
+            // 将显示名称转换为键名（如果需要的话）
+            expType = convertDisplayNameToKey(expType);
+            
+            downloadPdfFile(expType);
         });
     });
 }
@@ -1215,6 +1230,144 @@ function convertDisplayNameToKey(displayName) {
     return nameToKeyMap[displayName] || displayName;
 }
 
+// 生成PDF文件路径
+function generatePdfFilePath(expType) {
+    // 实验类型到目录的映射（与generatePklFilePath保持一致）
+    const dirMap = {
+        'classifier': 'classifier',
+        'privacy_noise': 'privacy',
+        'privacy_query': 'privacy',
+        'related_video': 'related',
+        'related_web': 'related',
+        'video_bandwidth': 'video_bandwidth',
+        'web_bandwidth': 'web_bandwidth'
+    };
+    
+    // 实验类型到PDF文件名的映射
+
+    const pdfFileMap = {
+        'classifier': 'empirical_privacy.pdf',
+        'privacy_noise': 'privacy_loss_vs_noise_std.pdf',
+        'privacy_query': 'privacy_loss_vs_query_num.pdf',
+        'related_video': 'overhead_comparsion_video_loglog.pdf',
+        'related_web': 'overhead_comparsion_web_loglog.pdf',
+        'video_bandwidth': 'bandwidth_vs_dp_interval_video.pdf',
+        'web_bandwidth': 'latency_vs_dp_interval_web.pdf'
+    };
+    
+    const dirName = dirMap[expType] || expType;
+    const pdfFileName = pdfFileMap[expType] || `latency_vs_dp_interval_${expType}.pdf`;
+    
+    return `/mnt/hgfs/共享文件夹/evaluation/${dirName}/plots/${pdfFileName}`;
+}
+
+// 下载PDF文件
+function downloadPdfFile(expType) {
+    const pdfFilePath = generatePdfFilePath(expType);
+    
+    // 显示加载通知
+    showNotification('正在准备下载PDF文件...', 'info');
+    
+    // 发送API请求来处理PDF文件访问
+    fetch('http://localhost:3000/api/download-pdf', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            filePath: pdfFilePath,
+            expType: expType
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`服务器响应错误: ${response.status} ${response.statusText}`);
+        }
+        return response.blob();
+    })
+    .then(blob => {
+        // 创建下载链接
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = `${getExperimentTypeName(expType)}_结果图表.pdf`;
+        
+        // 添加到页面并触发下载
+        document.body.appendChild(a);
+        a.click();
+        
+        // 清理
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+        showNotification('PDF文件下载成功', 'success');
+    })
+    .catch(error => {
+        console.error('下载PDF文件失败:', error);
+        
+        // 如果API不可用，尝试直接打开文件
+        showPdfInModal(expType, pdfFilePath);
+    });
+}
+
+// 在弹窗中显示PDF路径（备用方案）
+function showPdfInModal(expType, pdfFilePath) {
+    const modalHtml = `
+        <div class="modal-overlay" id="pdf-download-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-file-pdf"></i> PDF文件下载</h3>
+                    <button class="modal-close" onclick="closePdfModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="file-path-container">
+                        <label>PDF文件位置：</label>
+                        <div class="path-display">
+                            <input type="text" id="pdf-file-path" value="${pdfFilePath}" readonly>
+                            <button class="copy-btn" onclick="copyPdfPath()">
+                                <i class="fas fa-copy"></i> 复制路径
+                            </button>
+                        </div>
+                    </div>
+                    <div class="path-info">
+                        <p><strong>实验类型：</strong> ${getExperimentTypeName(expType)}</p>
+                        <p><strong>文件说明：</strong> 实验结果图表PDF文件</p>
+                        <p class="download-note">
+                            <i class="fas fa-info-circle"></i> 
+                            请手动访问上述路径查看PDF文件，或将路径复制到文件管理器中打开。
+                        </p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-secondary" onclick="closePdfModal()">关闭</button>
+                    <button class="copy-btn" onclick="copyPdfPath()">
+                        <i class="fas fa-copy"></i> 复制路径
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // 添加弹窗到页面
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // 显示弹窗
+    const modal = document.getElementById('pdf-download-modal');
+    modal.style.display = 'flex';
+    
+    // 点击遮罩层关闭弹窗
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closePdfModal();
+        }
+    });
+    
+    showNotification('已显示PDF文件路径', 'info');
+}
+
 // 复制PKL文件路径到剪贴板
 function copyPklPath() {
     const pathInput = document.getElementById('pkl-file-path');
@@ -1233,6 +1386,29 @@ function copyPklPath() {
 // 关闭PKL文件路径弹窗
 function closePklPathModal() {
     const modal = document.getElementById('pkl-path-modal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+// 复制PDF文件路径到剪贴板
+function copyPdfPath() {
+    const pathInput = document.getElementById('pdf-file-path');
+    pathInput.select();
+    pathInput.setSelectionRange(0, 99999); // 用于移动设备
+    
+    try {
+        document.execCommand('copy');
+        showNotification('PDF路径已复制到剪贴板', 'success');
+    } catch (err) {
+        console.error('复制失败:', err);
+        showNotification('复制失败，请手动复制', 'error');
+    }
+}
+
+// 关闭PDF下载弹窗
+function closePdfModal() {
+    const modal = document.getElementById('pdf-download-modal');
     if (modal) {
         modal.remove();
     }

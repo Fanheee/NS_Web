@@ -174,29 +174,81 @@
                 <div class="tab-content" id="privacy-shield">
                     <h2><i class="fas fa-shield-alt"></i> 隐私护盾</h2>
                     <div class="shield-container">
-                        <div class="shield-status">
-                            <div class="shield-icon active">
-                                <i class="fas fa-shield-alt"></i>
+                        <div class="principle-intro">
+                            <h3>DP-shield 核心原理</h3>
+                            <p>基于差分隐私的网络侧信道防护系统，通过创新的流量整形技术保护用户隐私</p>
+                        </div>
+                        
+                        <div class="principle-cards">
+                            <div class="principle-card">
+                                <div class="principle-icon">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <div class="principle-content">
+                                    <h4>差分隐私建模</h4>
+                                    <p>将流量整形问题创新性地建模为差分隐私问题，通过严格的数学理论保证隐私保护的量化指标，实现可证明的隐私安全性。</p>
+                                </div>
                             </div>
-                            <div class="shield-info">
-                                <h3>护盾状态: <span class="status-active">激活</span></h3>
-                                <p>当前差分隐私参数设置: ε = 0.5, δ = 10<sup>-5</sup></p>
+                            
+                            <div class="principle-card">
+                                <div class="principle-icon">
+                                    <i class="fas fa-window-maximize"></i>
+                                </div>
+                                <div class="principle-content">
+                                    <h4>窗口化DP保证</h4>
+                                    <p>设计支持窗口化差分隐私保证的自适应整形策略，在时间窗口内动态调整隐私预算分配，平衡隐私保护与系统性能。</p>
+                                </div>
+                            </div>
+                            
+                            <div class="principle-card">
+                                <div class="principle-icon">
+                                    <i class="fas fa-random"></i>
+                                </div>
+                                <div class="principle-content">
+                                    <h4>噪声流量生成</h4>
+                                    <p>利用缓冲队列和差分隐私机制生成带噪声的塑形流量，通过添加随机延迟和虚假数据包隐藏真实流量特征。</p>
+                                </div>
+                            </div>
+                            
+                            <div class="principle-card">
+                                <div class="principle-icon">
+                                    <i class="fas fa-route"></i>
+                                </div>
+                                <div class="principle-content">
+                                    <h4>TQUIC隧道传输</h4>
+                                    <p>通过TQUIC隧道传输STREAM帧，保证数据传输的可靠性和实时性，同时在传输层面实现流量特征的进一步混淆。</p>
+                                </div>
+                            </div>
+                            
+                            <div class="principle-card">
+                                <div class="principle-icon">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </div>
+                                <div class="principle-content">
+                                    <h4>双向独立整形</h4>
+                                    <p>在发送端进行流量整形，在接收端对流量去整形，实现双向独立的流量保护策略，防止攻击者从任一方向分析流量模式。</p>
+                                </div>
+                            </div>
+                            
+                            <div class="principle-card">
+                                <div class="principle-icon">
+                                    <i class="fas fa-puzzle-piece"></i>
+                                </div>
+                                <div class="principle-content">
+                                    <h4>一体化集成</h4>
+                                    <p>提供Web端可视化工具、命令行工具和浏览器插件的完整解决方案，实现"安全-效率-体验"的一体化集成，便于用户部署使用。</p>
+                                </div>
                             </div>
                         </div>
                         
-                        <div class="shield-settings">
-                            <h3>参数设置</h3>
-                            <div class="setting-group">
-                                <label for="epsilon">ε 参数 (隐私预算):</label>
-                                <input type="range" id="epsilon" min="0.1" max="2" step="0.1" value="0.5">
-                                <span class="range-value">0.5</span>
+                        <div class="principle-summary">
+                            <div class="summary-icon">
+                                <i class="fas fa-shield-check"></i>
                             </div>
-                            <div class="setting-group">
-                                <label for="delta">δ 参数 (失败概率):</label>
-                                <input type="range" id="delta" min="1" max="6" step="1" value="5">
-                                <span class="range-value">10<sup>-5</sup></span>
+                            <div class="summary-content">
+                                <h4>防护效果</h4>
+                                <p>通过DP-shield系统，原本能高精度识别加密流量内容的基于深度学习模型的攻击被弱化至接近随机猜测水平，有效保护用户隐私安全。</p>
                             </div>
-                            <button class="apply-btn">应用设置</button>
                         </div>
                     </div>
                 </div>
@@ -256,7 +308,7 @@
                                 </div>
                                 <div class="exp-content">
                                     <h4>Classifier</h4>
-                                    <p>分类器实验配置</p>
+                                    <p>经验隐私实验 - 分析分类器在差分隐私保护下的性能表现</p>
                                 </div>
                                 <div class="exp-arrow">
                                     <i class="fas fa-chevron-right"></i>
@@ -269,7 +321,7 @@
                                 </div>
                                 <div class="exp-content">
                                     <h4>Privacy&nbsp;Noise</h4>
-                                    <p>隐私噪声实验配置</p>
+                                    <p>隐私损失与噪声标准差关系实验 - 分析噪声水平对隐私保护的影响</p>
                                 </div>
                                 <div class="exp-arrow">
                                     <i class="fas fa-chevron-right"></i>
@@ -281,7 +333,7 @@
                                 </div>
                                 <div class="exp-content">
                                     <h4>Privacy&nbsp;Query</h4>
-                                    <p>隐私查询实验配置</p>
+                                    <p>隐私损失与查询次数关系实验 - 评估查询频率对隐私预算的消耗</p>
                                 </div>
                                 <div class="exp-arrow">
                                     <i class="fas fa-chevron-right"></i>
@@ -294,7 +346,7 @@
                                 </div>
                                 <div class="exp-content">
                                     <h4>Related&nbsp;Video</h4>
-                                    <p>视频相关实验配置</p>
+                                    <p>视频流量开销对比实验 - 对数坐标下的性能开销分析</p>
                                 </div>
                                 <div class="exp-arrow">
                                     <i class="fas fa-chevron-right"></i>
@@ -306,7 +358,7 @@
                                 </div>
                                 <div class="exp-content">
                                     <h4>Related&nbsp;Web</h4>
-                                    <p>网页相关实验配置</p>
+                                    <p>网页流量开销对比实验 - 对数坐标下的性能开销分析</p>
                                 </div>
                                 <div class="exp-arrow">
                                     <i class="fas fa-chevron-right"></i>
@@ -319,7 +371,7 @@
                                 </div>
                                 <div class="exp-content">
                                     <h4>Video&nbsp;Bandwidth</h4>
-                                    <p>视频带宽实验配置</p>
+                                    <p>视频带宽与差分隐私间隔关系实验 - 分析DP参数对视频传输的影响</p>
                                 </div>
                                 <div class="exp-arrow">
                                     <i class="fas fa-chevron-right"></i>
@@ -331,7 +383,7 @@
                                 </div>
                                 <div class="exp-content">
                                     <h4>Web&nbsp;Bandwidth</h4>
-                                    <p>网页带宽实验配置</p>
+                                    <p>网页延迟与差分隐私间隔关系实验 - 评估DP保护对网页响应性能的影响</p>
                                 </div>
                                 <div class="exp-arrow">
                                     <i class="fas fa-chevron-right"></i>

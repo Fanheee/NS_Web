@@ -1,51 +1,9 @@
 {
   "logs": [
     {
-      "name": "Related Video测试-1749893706219",
-      "type": "Related Video",
-      "startTime": "2025/6/14 17:35:06",
-      "status": "completed",
-      "id": 7
-    },
-    {
-      "name": "Related Video测试-1749893698030",
-      "type": "Related Video",
-      "startTime": "2025/6/14 17:34:58",
-      "status": "completed",
-      "id": 6
-    },
-    {
-      "name": "Privacy Query测试-1749893690371",
-      "type": "Privacy Query",
-      "startTime": "2025/6/14 17:34:50",
-      "status": "completed",
-      "id": 5
-    },
-    {
-      "name": "Privacy Noise测试-1749893677690",
-      "type": "Privacy Noise",
-      "startTime": "2025/6/14 17:34:37",
-      "status": "completed",
-      "id": 4
-    },
-    {
-      "name": "related测试-1749893416526",
-      "type": "related",
-      "startTime": "2025/6/14 17:30:16",
-      "status": "completed",
-      "id": 3
-    },
-    {
-      "name": "Web Bandwidth测试-1749893404970",
+      "name": "Web Bandwidth测试-1749957621169",
       "type": "Web Bandwidth",
-      "startTime": "2025/6/14 17:30:04",
-      "status": "completed",
-      "id": 2
-    },
-    {
-      "name": "Video Bandwidth测试-1749893393287",
-      "type": "Video Bandwidth",
-      "startTime": "2025/6/14 17:29:53",
+      "startTime": "2025/6/15 11:20:21",
       "status": "completed",
       "id": 1
     }
