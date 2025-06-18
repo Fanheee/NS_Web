@@ -879,24 +879,57 @@ function playVideo() {
         return;
     }
     
-    // 更新UI
+    // 更新UI显示正在启动
     videoPlaceholder.innerHTML = `
         <i class="fas fa-spinner fa-spin"></i>
-        <p>正在加载视频: ${videoName}</p>
+        <p>正在启动视频播放器: ${videoName}</p>
     `;
     
-    // 模拟视频加载
-    setTimeout(() => {
-        // 显示视频播放器
+    // 构建完整的视频文件路径
+    const videoPath = '/mnt/hgfs/共享文件夹/netshaper/dataset/server/video/' + videoName;
+    
+    // 构建VLC播放命令
+    const command = 'vlc ' + videoPath;
+    
+    // 通过API执行终端命令
+    fetch('http://localhost:3000/api/run-command', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            command: command
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('VLC命令执行结果:', data);
+        
+        // 显示视频播放器已启动
         videoPlaceholder.innerHTML = `
             <div class="video-playing">
                 <i class="fas fa-play-circle"></i>
-                <p>${videoName} (模拟播放中)</p>
+                <p>VLC播放器已启动</p>
+                <small>正在播放: ${videoName}</small>
             </div>
         `;
         
-        showNotification(`正在播放: ${videoName}`, 'success');
-    }, 1500);
+        showNotification(`VLC播放器已启动，正在播放: ${videoName}`, 'success');
+    })
+    .catch(error => {
+        console.error('启动VLC播放器失败:', error);
+        
+        // 显示错误状态
+        videoPlaceholder.innerHTML = `
+            <div class="video-error">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>播放器启动失败</p>
+                <small>错误: ${error.message}</small>
+            </div>
+        `;
+        
+        showNotification(`启动VLC播放器失败: ${error.message}`, 'error');
+    });
 }
 
 // 初始化视频播放器控制
